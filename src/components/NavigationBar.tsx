@@ -126,18 +126,6 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
                 <div className="absolute left-0 top-full mt-0.5 w-56 bg-white text-slate-800 rounded-lg shadow-2xl border border-slate-200 py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                   <button
                     onClick={() => {
-                      setActivePage('about');
-                      setAboutDropdownOpen(false);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-blue-50 hover:text-blue-600 transition flex items-center justify-between cursor-pointer border-b border-slate-100 ${
-                      activePage === 'about' ? 'bg-blue-50 text-blue-600 font-bold' : ''
-                    }`}
-                  >
-                    <span>Company Profile / About</span>
-                  </button>
-                  <button
-                    onClick={() => {
                       setActivePage('md-message');
                       setAboutDropdownOpen(false);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -326,7 +314,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
               }}
               className="w-full text-left py-1 text-sm font-medium text-slate-200"
             >
-              About Us (Overview)
+              About Us
             </button>
             <button
               onClick={() => {

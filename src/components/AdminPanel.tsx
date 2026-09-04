@@ -66,7 +66,13 @@ import {
   SpeedOptimizationSettings,
   ChatMessage
 } from '../types';
-import { RICARDO_SPEC_ROWS } from '../data/generatorSpecsData';
+import {
+  RICARDO_SPEC_ROWS,
+  PERKINS_STANDARD_SPEC_ROWS,
+  MOBILE_LIGHTING_SPEC_ROWS,
+  SYNC_PANEL_SPEC_ROWS
+} from '../data/generatorSpecsData';
+import { PRODUCTS_DATA } from '../data/themeData';
 import { safeStorage, safePushState, safeScrollTo } from '../utils/storage';
 
 interface AdminPanelProps {
@@ -2431,37 +2437,71 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   </p>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setIsAddingProduct(true);
-                    setEditingProduct({
-                      id: `gen-${Date.now()}`,
-                      name: '',
-                      category: 'diesel',
-                      categoryLabel: 'Diesel Generators',
-                      capacityRange: '100 kVA – 1000 kVA',
-                      engineMakes: 'Perkins (UK) / Cummins (USA)',
-                      voltage: '400V / 230V, 50Hz, 3-Phase',
-                      soundLevel: '68 dBA @ 7m',
-                      fuelType: 'Diesel',
-                      description: '',
-                      keyFeatures: ['Soundproof Acoustic Enclosure', 'DeepSea Digital Controller', '50°C Tropical Radiator'],
-                      specs: { 'Prime Power': '500 kVA', 'Standby Power': '550 kVA', 'Origin': 'Turkey' },
-                      imageBadge: 'Industrial High Performance',
-                      popular: true,
-                      catalogSheetTitle: 'HEAVY-DUTY DIESEL DRIVEN GENERATOR',
-                      catalogSubtitle: 'ORIGIN: TURKEY / UK / CHINA • STANDBY & PRIME POWER • 50 HZ 1500 RPM',
-                      catalogPageNumber: 'Page-4',
-                      openGenImageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80',
-                      canopyGenImageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80',
-                      specTableRows: RICARDO_SPEC_ROWS,
-                    });
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Generator</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const syncedProducts = PRODUCTS_DATA.map(p => {
+                        if (p.id === 'gas-generators' || p.category === 'gas') {
+                          return { ...p, specTableRows: PERKINS_STANDARD_SPEC_ROWS };
+                        }
+                        if (p.id === 'diesel-generators' || p.category === 'diesel') {
+                          return { ...p, specTableRows: RICARDO_SPEC_ROWS };
+                        }
+                        if (p.id === 'mobile-lighting') {
+                          return { ...p, specTableRows: MOBILE_LIGHTING_SPEC_ROWS };
+                        }
+                        if (p.id === 'synchronization-panels') {
+                          return { ...p, specTableRows: SYNC_PANEL_SPEC_ROWS };
+                        }
+                        return p;
+                      });
+                      setProducts(syncedProducts);
+                      safeStorage.setItem('cpt_products_v2', JSON.stringify(syncedProducts));
+                      await saveToBoth({ products: syncedProducts }, '✅ All 4 Generators & 31 Models Specs synchronized to Cloud Database!');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded bg-sky-700 hover:bg-sky-600 text-white font-bold text-xs transition shadow cursor-pointer"
+                    title="Synchronize all 4 generator products and 31 model specs to database"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Sync 4 Generators & 31 Models to DB</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsAddingProduct(true);
+                      setEditingProduct({
+                        id: `gen-${Date.now()}`,
+                        name: '',
+                        category: 'gas',
+                        categoryLabel: 'Natural & Biogas',
+                        capacityRange: '50 kW – 2000 kW',
+                        engineMakes: 'Genuine Perkins / Teksan High-Efficiency Industrial Series',
+                        voltage: '400V / 230V, 50Hz, 3-Phase',
+                        soundLevel: '65 – 70 dBA @ 7m',
+                        fuelType: 'Pipeline Natural Gas & Industrial Diesel',
+                        description: 'High-efficiency continuous base-load natural gas and biogas generator systems designed for continuous operation in factories.',
+                        keyFeatures: [
+                          '31 standard engineering models spanning 13 kVA to 2000 kVA with verified load ratings',
+                          'Continuous base-load and standby ratings compliant with industrial factory standards',
+                          'DeepSea Digital Smart Controller (DSE 7320 / 8610) with Auto Mains Failure (AMF)'
+                        ],
+                        specs: { 'Prime Power': '13 kVA – 2000 kVA', 'Standby Power': '14.3 kVA – 2200 kVA', 'Origin': 'Turkey / UK' },
+                        imageBadge: '50 kW – 2000 kW • Base Load',
+                        popular: true,
+                        catalogSheetTitle: 'TEKSAN NATURAL GAS & BIOGAS GENSETS — TECHNICAL SPECIFICATIONS',
+                        catalogSubtitle: 'ENGINEERING RATINGS TABLE (13 kVA – 2000 kVA) • 50 HZ 1500 RPM',
+                        catalogPageNumber: 'Page-1',
+                        openGenImageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80',
+                        canopyGenImageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80',
+                        specTableRows: PERKINS_STANDARD_SPEC_ROWS,
+                      });
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Generator</span>
+                  </button>
+                </div>
               </div>
 
               {/* Search Bar */}
@@ -2478,65 +2518,77 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
               {/* Product List */}
               <div className="space-y-3">
-                {filteredProducts.map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="bg-[#081220] border border-slate-800 hover:border-slate-700 p-4 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-4 transition"
-                  >
-                    <div className="space-y-1 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                          {prod.categoryLabel}
-                        </span>
-                        <h4 className="font-bold text-white text-sm">{prod.name}</h4>
-                        {prod.popular && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                            ★ Popular
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-400 line-clamp-2">{prod.description}</p>
-                      <div className="text-[11px] text-slate-300 flex flex-wrap gap-x-4 gap-y-1 pt-1">
-                        <span>⚡ <strong>Capacity:</strong> {prod.capacityRange}</span>
-                        <span>⚙️ <strong>Engine:</strong> {prod.engineMakes}</span>
-                        <span>🔊 <strong>Acoustic:</strong> {prod.soundLevel}</span>
-                        <span>📊 <strong>Datasheet Specs:</strong> {prod.specTableRows?.length || 13} models configured</span>
-                      </div>
-                    </div>
+                {filteredProducts.map((prod) => {
+                  const resolvedModelCount = (prod.specTableRows && prod.specTableRows.length > 0)
+                    ? prod.specTableRows.length
+                    : (prod.id === 'gas-generators' || prod.category === 'gas' ? 31 : (prod.id === 'mobile-lighting' ? 4 : (prod.id === 'synchronization-panels' ? 3 : 13)));
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => {
-                          if (onViewProductDetail) {
-                            onViewProductDetail(prod);
-                          }
-                        }}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-700/60 text-xs font-bold transition cursor-pointer"
-                        title="Quick View Specifications"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Quick Specs</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingProduct(prod);
-                          setIsAddingProduct(false);
-                        }}
-                        className="p-2 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 transition"
-                        title="Edit Generator & Catalog Specs"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(prod.id)}
-                        className="p-2 rounded bg-slate-800 hover:bg-red-900/40 text-red-400 transition"
-                        title="Delete Generator"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                  return (
+                    <div
+                      key={prod.id}
+                      className="bg-[#081220] border border-slate-800 hover:border-slate-700 p-4 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-4 transition"
+                    >
+                      <div className="space-y-1 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                            {prod.categoryLabel}
+                          </span>
+                          <h4 className="font-bold text-white text-sm">{prod.name}</h4>
+                          {prod.popular && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                              ★ Popular
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400 line-clamp-2">{prod.description}</p>
+                        <div className="text-[11px] text-slate-300 flex flex-wrap gap-x-4 gap-y-1 pt-1">
+                          <span>⚡ <strong>Capacity:</strong> {prod.capacityRange}</span>
+                          <span>⚙️ <strong>Engine:</strong> {prod.engineMakes}</span>
+                          <span>🔊 <strong>Acoustic:</strong> {prod.soundLevel}</span>
+                          <span>📊 <strong>Datasheet Specs:</strong> {resolvedModelCount} models configured</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            if (onViewProductDetail) {
+                              onViewProductDetail(prod);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 border border-blue-700/60 text-xs font-bold transition cursor-pointer"
+                          title="Quick View Specifications"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Quick Specs</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            const fallbackRows = (prod.id === 'gas-generators' || prod.category === 'gas')
+                              ? PERKINS_STANDARD_SPEC_ROWS
+                              : (prod.id === 'mobile-lighting' ? MOBILE_LIGHTING_SPEC_ROWS : (prod.id === 'synchronization-panels' ? SYNC_PANEL_SPEC_ROWS : RICARDO_SPEC_ROWS));
+                            setEditingProduct({
+                              ...prod,
+                              specTableRows: (prod.specTableRows && prod.specTableRows.length > 0) ? prod.specTableRows : fallbackRows,
+                            });
+                            setIsAddingProduct(false);
+                          }}
+                          className="p-2 rounded bg-slate-800 hover:bg-slate-700 text-blue-300 transition"
+                          title="Edit Generator & Catalog Specs"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(prod.id)}
+                          className="p-2 rounded bg-slate-800 hover:bg-red-900/40 text-red-400 transition"
+                          title="Delete Generator"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -4016,18 +4068,30 @@ fbq('track', 'PageView');
                 />
               </div>
 
-              {/* Technical Specifications Table Editor (Matching User Photo) */}
+              {/* Technical Specifications Table Editor (Matching User Photo & 31 Perkins Models) */}
               <div className="p-3 bg-slate-900/90 rounded-lg border border-sky-800/80 space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
                   <div>
                     <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider">
-                      Technical Specification & Load Ratings Table (Matching Photo)
+                      Technical Specification & Load Ratings Table (31 Perkins Models / 13 Ricardo Models)
                     </h4>
                     <p className="text-[11px] text-slate-400">
-                      Edit models, kW, kVA, fuel consumption, dimensions, and weights.
+                      Edit GENSET ratings, Prime/Standby kVA & kW, engine models, dimensions, weights, and fuel consumption.
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingProduct({
+                          ...editingProduct,
+                          specTableRows: PERKINS_STANDARD_SPEC_ROWS,
+                        });
+                      }}
+                      className="px-2.5 py-1 rounded bg-amber-600 hover:bg-amber-500 text-white text-[11px] font-bold transition cursor-pointer"
+                    >
+                      Load 31 Perkins Models (13kVA – 2000kVA)
+                    </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -4038,30 +4102,37 @@ fbq('track', 'PageView');
                       }}
                       className="px-2.5 py-1 rounded bg-sky-800 hover:bg-sky-700 text-white text-[11px] font-bold transition cursor-pointer"
                     >
-                      Reset to 13 Models from Photo
+                      Load 13 Ricardo Models (15kW – 250kW)
                     </button>
                     <button
                       type="button"
                       onClick={() => {
                         const newRow: GeneratorSpecRow = {
                           id: `row-${Date.now()}`,
-                          model: 'GF-XXKW / GFS-XXKW',
-                          standbyKva: '50Kva',
-                          standbyKw: '40Kw',
-                          fuelCons: '5',
+                          gensetRating: '50KVA',
+                          primeKva: '50',
+                          primeKw: '40',
+                          standbyKva: '55',
+                          standbyKw: '44',
+                          engineModel: '4100ZD',
+                          dimensionsCm: '220×93×110',
+                          dimensionsMm: '2200X930X1100',
+                          weightKg: '1500',
+                          fuelCons: '5.0',
                           currentA: '72',
                           frequencyHz: '50',
                           rpm: '1500',
                           cylinders: '4',
-                          engineModel: '4100ZD',
+                          model: 'GF-XXKW / GFS-XXKW',
                           alternatorModel: 'STC-40',
-                          dimensionsMm: '2200X930X1100 / 2270X1000X1230',
-                          weightKg: '1500 / 1760',
                           priceBdt: 'Call for Quote',
                         };
+                        const baseRows = (editingProduct.specTableRows && editingProduct.specTableRows.length > 0)
+                          ? editingProduct.specTableRows
+                          : (editingProduct.id === 'gas-generators' || editingProduct.category === 'gas' ? PERKINS_STANDARD_SPEC_ROWS : RICARDO_SPEC_ROWS);
                         setEditingProduct({
                           ...editingProduct,
-                          specTableRows: [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS), newRow],
+                          specTableRows: [...baseRows, newRow],
                         });
                       }}
                       className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition cursor-pointer flex items-center gap-1"
@@ -4073,179 +4144,193 @@ fbq('track', 'PageView');
                 </div>
 
                 {/* Rows Editor Scrollable */}
-                <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
+                <div className="max-h-80 overflow-y-auto space-y-2 pr-1">
                   {((editingProduct.specTableRows && editingProduct.specTableRows.length > 0)
                     ? editingProduct.specTableRows
-                    : RICARDO_SPEC_ROWS
-                  ).map((row, rIdx) => (
-                    <div
-                      key={row.id || rIdx}
-                      className="p-2 bg-slate-950/80 rounded border border-slate-800 text-xs space-y-1.5"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-bold text-sky-400 text-[11px]">
-                          #{rIdx + 1}: {row.model}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const currentRows = editingProduct.specTableRows || RICARDO_SPEC_ROWS;
-                            setEditingProduct({
-                              ...editingProduct,
-                              specTableRows: currentRows.filter((_, idx) => idx !== rIdx),
-                            });
-                          }}
-                          className="text-red-400 hover:text-red-300 p-1 rounded hover:bg-red-950/40 cursor-pointer"
-                          title="Delete Row"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                    : (editingProduct.id === 'gas-generators' || editingProduct.category === 'gas' ? PERKINS_STANDARD_SPEC_ROWS : RICARDO_SPEC_ROWS)
+                  ).map((row, rIdx) => {
+                    const currentRows = (editingProduct.specTableRows && editingProduct.specTableRows.length > 0)
+                      ? editingProduct.specTableRows
+                      : (editingProduct.id === 'gas-generators' || editingProduct.category === 'gas' ? PERKINS_STANDARD_SPEC_ROWS : RICARDO_SPEC_ROWS);
+
+                    return (
+                      <div
+                        key={row.id || rIdx}
+                        className="p-2.5 bg-slate-950/80 rounded border border-slate-800 text-xs space-y-2"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-bold text-sky-400 text-[11px]">
+                            #{rIdx + 1}: {row.gensetRating || row.model} — Engine: {row.engineModel || 'N/A'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingProduct({
+                                ...editingProduct,
+                                specTableRows: currentRows.filter((_, idx) => idx !== rIdx),
+                              });
+                            }}
+                            className="text-red-400 hover:text-red-300 p-1 rounded hover:bg-red-950/40 cursor-pointer"
+                            title="Delete Row"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                          <div>
+                            <label className="text-[10px] text-amber-400 block font-semibold">GENSET Rating</label>
+                            <input
+                              type="text"
+                              value={row.gensetRating || row.model}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], gensetRating: e.target.value, model: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 13KVA"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-sky-400 block font-semibold">Prime (KVA)</label>
+                            <input
+                              type="text"
+                              value={row.primeKva || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], primeKva: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 13"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-sky-400 block font-semibold">Prime (KW)</label>
+                            <input
+                              type="text"
+                              value={row.primeKw || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], primeKw: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 10.4"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-blue-400 block font-semibold">Standby (KVA)</label>
+                            <input
+                              type="text"
+                              value={row.standbyKva || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], standbyKva: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 14.3"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-blue-400 block font-semibold">Standby (KW)</label>
+                            <input
+                              type="text"
+                              value={row.standbyKw || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], standbyKw: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 11.44"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-emerald-400 block font-semibold">Engine Model</label>
+                            <input
+                              type="text"
+                              value={row.engineModel || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], engineModel: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 403D-15G"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-300 block font-semibold">Open Set (L×W×H) cm</label>
+                            <input
+                              type="text"
+                              value={row.dimensionsCm || row.dimensionsMm || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], dimensionsCm: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 115×56×117"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-slate-300 block font-semibold">Open Set (Kgs)</label>
+                            <input
+                              type="text"
+                              value={row.weightKg || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], weightKg: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 470"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-purple-300 block font-semibold">Fuel Cons. @ 75% (L/H)</label>
+                            <input
+                              type="text"
+                              value={row.fuelCons || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], fuelCons: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. 2.8"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-emerald-400 block font-semibold">Price / Quote Tag</label>
+                            <input
+                              type="text"
+                              value={row.priceBdt || ''}
+                              onChange={(e) => {
+                                const updated = [...currentRows];
+                                updated[rIdx] = { ...updated[rIdx], priceBdt: e.target.value };
+                                setEditingProduct({ ...editingProduct, specTableRows: updated });
+                              }}
+                              placeholder="e.g. ৳ 3,85,000 or Call for Quote"
+                              className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-1 text-white text-[11px]"
+                            />
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Model Name</label>
-                          <input
-                            type="text"
-                            value={row.model}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], model: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-blue-400 block">Standby (Kva)</label>
-                          <input
-                            type="text"
-                            value={row.standbyKva}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], standbyKva: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Standby (Kw)</label>
-                          <input
-                            type="text"
-                            value={row.standbyKw}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], standbyKw: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Fuel Cons.</label>
-                          <input
-                            type="text"
-                            value={row.fuelCons}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], fuelCons: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Current (A)</label>
-                          <input
-                            type="text"
-                            value={row.currentA}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], currentA: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Engine Model</label>
-                          <input
-                            type="text"
-                            value={row.engineModel}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], engineModel: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Alternator Model</label>
-                          <input
-                            type="text"
-                            value={row.alternatorModel}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], alternatorModel: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div className="col-span-2">
-                          <label className="text-[10px] text-slate-400 block">Dimensions (LXWXH) MM</label>
-                          <input
-                            type="text"
-                            value={row.dimensionsMm}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], dimensionsMm: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-slate-400 block">Weight (Kg)</label>
-                          <input
-                            type="text"
-                            value={row.weightKg}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], weightKg: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] text-emerald-400 block">Price / Quote Tag</label>
-                          <input
-                            type="text"
-                            value={row.priceBdt || ''}
-                            onChange={(e) => {
-                              const updated = [...(editingProduct.specTableRows || RICARDO_SPEC_ROWS)];
-                              updated[rIdx] = { ...updated[rIdx], priceBdt: e.target.value };
-                              setEditingProduct({ ...editingProduct, specTableRows: updated });
-                            }}
-                            placeholder="e.g. ৳ 4,50,000"
-                            className="w-full bg-[#0F1E36] border border-slate-700 rounded px-1.5 py-0.5 text-white text-[11px]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

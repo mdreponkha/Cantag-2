@@ -24,6 +24,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { AdminLogin } from './components/AdminLogin';
 import { LiveChatWidget } from './components/LiveChatWidget';
 import { PRODUCTS_DATA, SERVICES_DATA, PROJECTS_DATA, CLIENTS_DATA } from './data/themeData';
+import { PERKINS_STANDARD_SPEC_ROWS, RICARDO_SPEC_ROWS } from './data/generatorSpecsData';
 import { INITIAL_PAGES_CONTENT } from './data/pagesInitialData';
 import { safeStorage, safePushState, safeScrollTo } from './utils/storage';
 import { commitDatabaseToGitHub, fetchFromGitHubRaw } from './utils/githubSync';
@@ -105,7 +106,23 @@ export const App: React.FC = () => {
   const [products, setProducts] = useState<ProductItem[]>(() => {
     try {
       const saved = safeStorage.getItem('cpt_products_v2');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((p: any) => {
+            if (p.id === 'gas-generators' || p.category === 'gas') {
+              const rows = (p.specTableRows && p.specTableRows.length >= 10) ? p.specTableRows : PERKINS_STANDARD_SPEC_ROWS;
+              const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
+              const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
+              return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
+            }
+            if ((p.id === 'diesel-generators' || p.category === 'diesel') && (!p.specTableRows || p.specTableRows.length < 5)) {
+              return { ...p, specTableRows: RICARDO_SPEC_ROWS };
+            }
+            return p;
+          });
+        }
+      }
       safeStorage.removeItem('cpt_products');
     } catch (e) {
       console.error(e);
@@ -608,7 +625,7 @@ export const App: React.FC = () => {
           <>
             <div className="bg-gradient-to-b from-[#0A192F] to-slate-900 py-12 px-4 border-b border-slate-800 text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-                Company Profile
+                About Us
               </div>
               <h1 className="text-3xl sm:text-4xl font-black font-['Outfit'] text-white">
                 {pagesContent.about.title}
