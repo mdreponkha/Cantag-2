@@ -1,0 +1,33 @@
+{
+  "entities": {
+    "siteData": {
+      "title": "CanstarSiteData",
+      "description": "Global website configuration, products, and page contents",
+      "type": "object",
+      "properties": {
+        "customizer": {
+          "type": "object",
+          "description": "Theme customizer state including phone, email, colors, etc."
+        },
+        "products": {
+          "type": "array",
+          "description": "List of generator products"
+        },
+        "pagesContent": {
+          "type": "object",
+          "description": "Pages content including hero, about, services, etc."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Timestamp of the last update"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/canstar_site_data/{docId}": {
+      "schema": "siteData",
+      "description": "Stores live site content and test document"
+    }
+  }
+}
