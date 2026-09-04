@@ -1,0 +1,630 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1086" width="100%" height="100%" style="background:#ffffff; font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;">
+<rect x="0" y="0" width="1000" height="84" fill="#04512e" />
+<style>
+  .header-text { fill: #ffffff; font-weight: bold; font-size: 15px; text-anchor: middle; dominant-baseline: middle; }
+  .sub-header-text { fill: #ffffff; font-weight: bold; font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+  .cell-text { fill: #111827; font-size: 13.5px; text-anchor: middle; dominant-baseline: middle; }
+  .cell-bold { fill: #000000; font-weight: bold; font-size: 13.5px; text-anchor: middle; dominant-baseline: middle; }
+  .grid-line { stroke: #1b7a4b; stroke-width: 1.2; }
+  .table-border { stroke: #04512e; stroke-width: 2; fill: none; }
+  .cell-border { stroke: #d1d5db; stroke-width: 1; }
+</style>
+<text x="50" y="32" class="header-text">GENSET</text>
+<text x="50" y="52" class="header-text">Rating</text>
+<text x="170" y="22" class="header-text">Prime</text>
+<text x="310" y="22" class="header-text">Standby</text>
+<text x="465" y="33" class="header-text">Engine</text>
+<text x="465" y="53" class="header-text">Model</text>
+<text x="705" y="22" class="header-text">Dimension &amp; Weight</text>
+<text x="930" y="26" class="header-text">Fuel Cons.</text>
+<text x="930" y="45" class="header-text">@ 75%</text>
+<text x="930" y="62" class="sub-header-text">(L/H)</text>
+<line x1="100" y1="44" x2="380" y2="44" class="grid-line" />
+<line x1="550" y1="44" x2="860" y2="44" class="grid-line" />
+<text x="135" y="64" class="sub-header-text">KVA</text>
+<text x="205" y="64" class="sub-header-text">KW</text>
+<text x="275" y="64" class="sub-header-text">KVA</text>
+<text x="345" y="64" class="sub-header-text">KW</text>
+<text x="630" y="56" class="sub-header-text">Open Set</text>
+<text x="630" y="73" class="sub-header-text">(cm) (LxWxH)</text>
+<text x="785" y="56" class="sub-header-text">Open Set</text>
+<text x="785" y="73" class="sub-header-text">(KGs)</text>
+<line x1="100" y1="0" x2="100" y2="84" class="grid-line" />
+<line x1="170" y1="44" x2="170" y2="84" class="grid-line" />
+<line x1="240" y1="0" x2="240" y2="84" class="grid-line" />
+<line x1="310" y1="44" x2="310" y2="84" class="grid-line" />
+<line x1="380" y1="0" x2="380" y2="84" class="grid-line" />
+<line x1="550" y1="0" x2="550" y2="84" class="grid-line" />
+<line x1="710" y1="44" x2="710" y2="84" class="grid-line" />
+<line x1="860" y1="0" x2="860" y2="84" class="grid-line" />
+<rect x="0" y="84" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="116" x2="1000" y2="116" class="cell-border" />
+<text x="50" y="100" class="cell-bold">13KVA</text>
+<text x="135" y="100" class="cell-text">13</text>
+<line x1="100" y1="84" x2="100" y2="116" class="cell-border" />
+<text x="205" y="100" class="cell-text">10.4</text>
+<line x1="170" y1="84" x2="170" y2="116" class="cell-border" />
+<text x="275" y="100" class="cell-text">14.3</text>
+<line x1="240" y1="84" x2="240" y2="116" class="cell-border" />
+<text x="345" y="100" class="cell-text">11.44</text>
+<line x1="310" y1="84" x2="310" y2="116" class="cell-border" />
+<text x="465" y="100" class="cell-bold">403D-15G</text>
+<line x1="380" y1="84" x2="380" y2="116" class="cell-border" />
+<text x="630" y="100" class="cell-text">115x56x117</text>
+<line x1="550" y1="84" x2="550" y2="116" class="cell-border" />
+<text x="785" y="100" class="cell-text">470</text>
+<line x1="710" y1="84" x2="710" y2="116" class="cell-border" />
+<text x="930" y="100" class="cell-text">2.8</text>
+<line x1="860" y1="84" x2="860" y2="116" class="cell-border" />
+<rect x="0" y="116" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="148" x2="1000" y2="148" class="cell-border" />
+<text x="50" y="132" class="cell-bold">20KVA</text>
+<text x="135" y="132" class="cell-text">20</text>
+<line x1="100" y1="116" x2="100" y2="148" class="cell-border" />
+<text x="205" y="132" class="cell-text">16</text>
+<line x1="170" y1="116" x2="170" y2="148" class="cell-border" />
+<text x="275" y="132" class="cell-text">22</text>
+<line x1="240" y1="116" x2="240" y2="148" class="cell-border" />
+<text x="345" y="132" class="cell-text">17</text>
+<line x1="310" y1="116" x2="310" y2="148" class="cell-border" />
+<text x="465" y="132" class="cell-bold">404D-22G</text>
+<line x1="380" y1="116" x2="380" y2="148" class="cell-border" />
+<text x="630" y="132" class="cell-text">132x56x122</text>
+<line x1="550" y1="116" x2="550" y2="148" class="cell-border" />
+<text x="785" y="132" class="cell-text">560</text>
+<line x1="710" y1="116" x2="710" y2="148" class="cell-border" />
+<text x="930" y="132" class="cell-text">4.0</text>
+<line x1="860" y1="116" x2="860" y2="148" class="cell-border" />
+<rect x="0" y="148" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="180" x2="1000" y2="180" class="cell-border" />
+<text x="50" y="164" class="cell-bold">25KVA</text>
+<text x="135" y="164" class="cell-text">25</text>
+<line x1="100" y1="148" x2="100" y2="180" class="cell-border" />
+<text x="205" y="164" class="cell-text">20</text>
+<line x1="170" y1="148" x2="170" y2="180" class="cell-border" />
+<text x="275" y="164" class="cell-text">27.5</text>
+<line x1="240" y1="148" x2="240" y2="180" class="cell-border" />
+<text x="345" y="164" class="cell-text">22</text>
+<line x1="310" y1="148" x2="310" y2="180" class="cell-border" />
+<text x="465" y="164" class="cell-bold">1103A-33G</text>
+<line x1="380" y1="148" x2="380" y2="180" class="cell-border" />
+<text x="630" y="164" class="cell-text">147x70x136</text>
+<line x1="550" y1="148" x2="550" y2="180" class="cell-border" />
+<text x="785" y="164" class="cell-text">800</text>
+<line x1="710" y1="148" x2="710" y2="180" class="cell-border" />
+<text x="930" y="164" class="cell-text">5.4</text>
+<line x1="860" y1="148" x2="860" y2="180" class="cell-border" />
+<rect x="0" y="180" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="212" x2="1000" y2="212" class="cell-border" />
+<text x="50" y="196" class="cell-bold">30KVA</text>
+<text x="135" y="196" class="cell-text">30</text>
+<line x1="100" y1="180" x2="100" y2="212" class="cell-border" />
+<text x="205" y="196" class="cell-text">24</text>
+<line x1="170" y1="180" x2="170" y2="212" class="cell-border" />
+<text x="275" y="196" class="cell-text">33</text>
+<line x1="240" y1="180" x2="240" y2="212" class="cell-border" />
+<text x="345" y="196" class="cell-text">26</text>
+<line x1="310" y1="180" x2="310" y2="212" class="cell-border" />
+<text x="465" y="196" class="cell-bold">1103A-33G</text>
+<line x1="380" y1="180" x2="380" y2="212" class="cell-border" />
+<text x="630" y="196" class="cell-text">147x70x136</text>
+<line x1="550" y1="180" x2="550" y2="212" class="cell-border" />
+<text x="785" y="196" class="cell-text">800</text>
+<line x1="710" y1="180" x2="710" y2="212" class="cell-border" />
+<text x="930" y="196" class="cell-text">5.4</text>
+<line x1="860" y1="180" x2="860" y2="212" class="cell-border" />
+<rect x="0" y="212" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="244" x2="1000" y2="244" class="cell-border" />
+<text x="50" y="228" class="cell-bold">42.5KVA</text>
+<text x="135" y="228" class="cell-text">42.5</text>
+<line x1="100" y1="212" x2="100" y2="244" class="cell-border" />
+<text x="205" y="228" class="cell-text">34</text>
+<line x1="170" y1="212" x2="170" y2="244" class="cell-border" />
+<text x="275" y="228" class="cell-text">45</text>
+<line x1="240" y1="212" x2="240" y2="244" class="cell-border" />
+<text x="345" y="228" class="cell-text">36</text>
+<line x1="310" y1="212" x2="310" y2="244" class="cell-border" />
+<text x="465" y="228" class="cell-bold">11034-33TG1</text>
+<line x1="380" y1="212" x2="380" y2="244" class="cell-border" />
+<text x="630" y="228" class="cell-text">158x70x135</text>
+<line x1="550" y1="212" x2="550" y2="244" class="cell-border" />
+<text x="785" y="228" class="cell-text">960</text>
+<line x1="710" y1="212" x2="710" y2="244" class="cell-border" />
+<text x="930" y="228" class="cell-text">8.2</text>
+<line x1="860" y1="212" x2="860" y2="244" class="cell-border" />
+<rect x="0" y="244" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="276" x2="1000" y2="276" class="cell-border" />
+<text x="50" y="260" class="cell-bold">45KVA</text>
+<text x="135" y="260" class="cell-text">45</text>
+<line x1="100" y1="244" x2="100" y2="276" class="cell-border" />
+<text x="205" y="260" class="cell-text">36</text>
+<line x1="170" y1="244" x2="170" y2="276" class="cell-border" />
+<text x="275" y="260" class="cell-text">49.5</text>
+<line x1="240" y1="244" x2="240" y2="276" class="cell-border" />
+<text x="345" y="260" class="cell-text">39.5</text>
+<line x1="310" y1="244" x2="310" y2="276" class="cell-border" />
+<text x="465" y="260" class="cell-bold">1103A-33TG1</text>
+<line x1="380" y1="244" x2="380" y2="276" class="cell-border" />
+<text x="630" y="260" class="cell-text">158x70x135</text>
+<line x1="550" y1="244" x2="550" y2="276" class="cell-border" />
+<text x="785" y="260" class="cell-text">960</text>
+<line x1="710" y1="244" x2="710" y2="276" class="cell-border" />
+<text x="930" y="260" class="cell-text">8.2</text>
+<line x1="860" y1="244" x2="860" y2="276" class="cell-border" />
+<rect x="0" y="276" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="308" x2="1000" y2="308" class="cell-border" />
+<text x="50" y="292" class="cell-bold">60KVA</text>
+<text x="135" y="292" class="cell-text">60</text>
+<line x1="100" y1="276" x2="100" y2="308" class="cell-border" />
+<text x="205" y="292" class="cell-text">48</text>
+<line x1="170" y1="276" x2="170" y2="308" class="cell-border" />
+<text x="275" y="292" class="cell-text">63</text>
+<line x1="240" y1="276" x2="240" y2="308" class="cell-border" />
+<text x="345" y="292" class="cell-text">50.4</text>
+<line x1="310" y1="276" x2="310" y2="308" class="cell-border" />
+<text x="465" y="292" class="cell-bold">1103A-33TG2</text>
+<line x1="380" y1="276" x2="380" y2="308" class="cell-border" />
+<text x="630" y="292" class="cell-text">163x70x144</text>
+<line x1="550" y1="276" x2="550" y2="308" class="cell-border" />
+<text x="785" y="292" class="cell-text">960</text>
+<line x1="710" y1="276" x2="710" y2="308" class="cell-border" />
+<text x="930" y="292" class="cell-text">10.4</text>
+<line x1="860" y1="276" x2="860" y2="308" class="cell-border" />
+<rect x="0" y="308" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="340" x2="1000" y2="340" class="cell-border" />
+<text x="50" y="324" class="cell-bold">65KVA</text>
+<text x="135" y="324" class="cell-text">65</text>
+<line x1="100" y1="308" x2="100" y2="340" class="cell-border" />
+<text x="205" y="324" class="cell-text">52</text>
+<line x1="170" y1="308" x2="170" y2="340" class="cell-border" />
+<text x="275" y="324" class="cell-text">71.5</text>
+<line x1="240" y1="308" x2="240" y2="340" class="cell-border" />
+<text x="345" y="324" class="cell-text">57.2</text>
+<line x1="310" y1="308" x2="310" y2="340" class="cell-border" />
+<text x="465" y="324" class="cell-bold">1104A-44TG1</text>
+<line x1="380" y1="308" x2="380" y2="340" class="cell-border" />
+<text x="630" y="324" class="cell-text">180x70x148</text>
+<line x1="550" y1="308" x2="550" y2="340" class="cell-border" />
+<text x="785" y="324" class="cell-text">960</text>
+<line x1="710" y1="308" x2="710" y2="340" class="cell-border" />
+<text x="930" y="324" class="cell-text">11.2</text>
+<line x1="860" y1="308" x2="860" y2="340" class="cell-border" />
+<rect x="0" y="340" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="372" x2="1000" y2="372" class="cell-border" />
+<text x="50" y="356" class="cell-bold">80KVA</text>
+<text x="135" y="356" class="cell-text">80</text>
+<line x1="100" y1="340" x2="100" y2="372" class="cell-border" />
+<text x="205" y="356" class="cell-text">64</text>
+<line x1="170" y1="340" x2="170" y2="372" class="cell-border" />
+<text x="275" y="356" class="cell-text">88</text>
+<line x1="240" y1="340" x2="240" y2="372" class="cell-border" />
+<text x="345" y="356" class="cell-text">70.4</text>
+<line x1="310" y1="340" x2="310" y2="372" class="cell-border" />
+<text x="465" y="356" class="cell-bold">1104A-44TG2</text>
+<line x1="380" y1="340" x2="380" y2="372" class="cell-border" />
+<text x="630" y="356" class="cell-text">186x72x149</text>
+<line x1="550" y1="340" x2="550" y2="372" class="cell-border" />
+<text x="785" y="356" class="cell-text">1080</text>
+<line x1="710" y1="340" x2="710" y2="372" class="cell-border" />
+<text x="930" y="356" class="cell-text">14</text>
+<line x1="860" y1="340" x2="860" y2="372" class="cell-border" />
+<rect x="0" y="372" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="404" x2="1000" y2="404" class="cell-border" />
+<text x="50" y="388" class="cell-bold">100KVA</text>
+<text x="135" y="388" class="cell-text">100</text>
+<line x1="100" y1="372" x2="100" y2="404" class="cell-border" />
+<text x="205" y="388" class="cell-text">80</text>
+<line x1="170" y1="372" x2="170" y2="404" class="cell-border" />
+<text x="275" y="388" class="cell-text">110</text>
+<line x1="240" y1="372" x2="240" y2="404" class="cell-border" />
+<text x="345" y="388" class="cell-text">88</text>
+<line x1="310" y1="372" x2="310" y2="404" class="cell-border" />
+<text x="465" y="388" class="cell-bold">1104C-44TAG2</text>
+<line x1="380" y1="372" x2="380" y2="404" class="cell-border" />
+<text x="630" y="388" class="cell-text">186x72x149</text>
+<line x1="550" y1="372" x2="550" y2="404" class="cell-border" />
+<text x="785" y="388" class="cell-text">1130</text>
+<line x1="710" y1="372" x2="710" y2="404" class="cell-border" />
+<text x="930" y="388" class="cell-text">17.1</text>
+<line x1="860" y1="372" x2="860" y2="404" class="cell-border" />
+<rect x="0" y="404" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="436" x2="1000" y2="436" class="cell-border" />
+<text x="50" y="420" class="cell-bold">150KVA</text>
+<text x="135" y="420" class="cell-text">150</text>
+<line x1="100" y1="404" x2="100" y2="436" class="cell-border" />
+<text x="205" y="420" class="cell-text">120</text>
+<line x1="170" y1="404" x2="170" y2="436" class="cell-border" />
+<text x="275" y="420" class="cell-text">165</text>
+<line x1="240" y1="404" x2="240" y2="436" class="cell-border" />
+<text x="345" y="420" class="cell-text">132</text>
+<line x1="310" y1="404" x2="310" y2="436" class="cell-border" />
+<text x="465" y="420" class="cell-bold">1006TG2</text>
+<line x1="380" y1="404" x2="380" y2="436" class="cell-border" />
+<text x="630" y="420" class="cell-text">231x77x158</text>
+<line x1="550" y1="404" x2="550" y2="436" class="cell-border" />
+<text x="785" y="420" class="cell-text">1350</text>
+<line x1="710" y1="404" x2="710" y2="436" class="cell-border" />
+<text x="930" y="420" class="cell-text">31</text>
+<line x1="860" y1="404" x2="860" y2="436" class="cell-border" />
+<rect x="0" y="436" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="468" x2="1000" y2="468" class="cell-border" />
+<text x="50" y="452" class="cell-bold">200KVA</text>
+<text x="135" y="452" class="cell-text">200</text>
+<line x1="100" y1="436" x2="100" y2="468" class="cell-border" />
+<text x="205" y="452" class="cell-text">160</text>
+<line x1="170" y1="436" x2="170" y2="468" class="cell-border" />
+<text x="275" y="452" class="cell-text">220</text>
+<line x1="240" y1="436" x2="240" y2="468" class="cell-border" />
+<text x="345" y="452" class="cell-text">176</text>
+<line x1="310" y1="436" x2="310" y2="468" class="cell-border" />
+<text x="465" y="452" class="cell-bold">1305C-E87TAG3</text>
+<line x1="380" y1="436" x2="380" y2="468" class="cell-border" />
+<text x="630" y="452" class="cell-text">254x86x187</text>
+<line x1="550" y1="436" x2="550" y2="468" class="cell-border" />
+<text x="785" y="452" class="cell-text">1830</text>
+<line x1="710" y1="436" x2="710" y2="468" class="cell-border" />
+<text x="930" y="452" class="cell-text">35</text>
+<line x1="860" y1="436" x2="860" y2="468" class="cell-border" />
+<rect x="0" y="468" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="500" x2="1000" y2="500" class="cell-border" />
+<text x="50" y="484" class="cell-bold">250KVA</text>
+<text x="135" y="484" class="cell-text">250</text>
+<line x1="100" y1="468" x2="100" y2="500" class="cell-border" />
+<text x="205" y="484" class="cell-text">200</text>
+<line x1="170" y1="468" x2="170" y2="500" class="cell-border" />
+<text x="275" y="484" class="cell-text">275</text>
+<line x1="240" y1="468" x2="240" y2="500" class="cell-border" />
+<text x="345" y="484" class="cell-text">220</text>
+<line x1="310" y1="468" x2="310" y2="500" class="cell-border" />
+<text x="465" y="484" class="cell-bold">1306C-E87TAG5</text>
+<line x1="380" y1="468" x2="380" y2="500" class="cell-border" />
+<text x="630" y="484" class="cell-text">254x86x187</text>
+<line x1="550" y1="468" x2="550" y2="500" class="cell-border" />
+<text x="785" y="484" class="cell-text">1920</text>
+<line x1="710" y1="468" x2="710" y2="500" class="cell-border" />
+<text x="930" y="484" class="cell-text">36</text>
+<line x1="860" y1="468" x2="860" y2="500" class="cell-border" />
+<rect x="0" y="500" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="532" x2="1000" y2="532" class="cell-border" />
+<text x="50" y="516" class="cell-bold">300KVA</text>
+<text x="135" y="516" class="cell-text">300</text>
+<line x1="100" y1="500" x2="100" y2="532" class="cell-border" />
+<text x="205" y="516" class="cell-text">240</text>
+<line x1="170" y1="500" x2="170" y2="532" class="cell-border" />
+<text x="275" y="516" class="cell-text">330</text>
+<line x1="240" y1="500" x2="240" y2="532" class="cell-border" />
+<text x="345" y="516" class="cell-text">264</text>
+<line x1="310" y1="500" x2="310" y2="532" class="cell-border" />
+<text x="465" y="516" class="cell-bold">2305A-E14TAG2</text>
+<line x1="380" y1="500" x2="380" y2="532" class="cell-border" />
+<text x="630" y="516" class="cell-text">318x113x215</text>
+<line x1="550" y1="500" x2="550" y2="532" class="cell-border" />
+<text x="785" y="516" class="cell-text">3580</text>
+<line x1="710" y1="500" x2="710" y2="532" class="cell-border" />
+<text x="930" y="516" class="cell-text">54</text>
+<line x1="860" y1="500" x2="860" y2="532" class="cell-border" />
+<rect x="0" y="532" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="564" x2="1000" y2="564" class="cell-border" />
+<text x="50" y="548" class="cell-bold">350KVA</text>
+<text x="135" y="548" class="cell-text">350</text>
+<line x1="100" y1="532" x2="100" y2="564" class="cell-border" />
+<text x="205" y="548" class="cell-text">280</text>
+<line x1="170" y1="532" x2="170" y2="564" class="cell-border" />
+<text x="275" y="548" class="cell-text">380</text>
+<line x1="240" y1="532" x2="240" y2="564" class="cell-border" />
+<text x="345" y="548" class="cell-text">304</text>
+<line x1="310" y1="532" x2="310" y2="564" class="cell-border" />
+<text x="465" y="548" class="cell-bold">2306A-E14TAG2</text>
+<line x1="380" y1="532" x2="380" y2="564" class="cell-border" />
+<text x="630" y="548" class="cell-text">318x113x215</text>
+<line x1="550" y1="532" x2="550" y2="564" class="cell-border" />
+<text x="785" y="548" class="cell-text">3580</text>
+<line x1="710" y1="532" x2="710" y2="564" class="cell-border" />
+<text x="930" y="548" class="cell-text">54</text>
+<line x1="860" y1="532" x2="860" y2="564" class="cell-border" />
+<rect x="0" y="564" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="596" x2="1000" y2="596" class="cell-border" />
+<text x="50" y="580" class="cell-bold">400KVA</text>
+<text x="135" y="580" class="cell-text">400</text>
+<line x1="100" y1="564" x2="100" y2="596" class="cell-border" />
+<text x="205" y="580" class="cell-text">280</text>
+<line x1="170" y1="564" x2="170" y2="596" class="cell-border" />
+<text x="275" y="580" class="cell-text">440</text>
+<line x1="240" y1="564" x2="240" y2="596" class="cell-border" />
+<text x="345" y="580" class="cell-text">352</text>
+<line x1="310" y1="564" x2="310" y2="596" class="cell-border" />
+<text x="465" y="580" class="cell-bold">2306A-E14TAG3</text>
+<line x1="380" y1="564" x2="380" y2="596" class="cell-border" />
+<text x="630" y="580" class="cell-text">318x116x215</text>
+<line x1="550" y1="564" x2="550" y2="596" class="cell-border" />
+<text x="785" y="580" class="cell-text">3700</text>
+<line x1="710" y1="564" x2="710" y2="596" class="cell-border" />
+<text x="930" y="580" class="cell-text">62</text>
+<line x1="860" y1="564" x2="860" y2="596" class="cell-border" />
+<rect x="0" y="596" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="628" x2="1000" y2="628" class="cell-border" />
+<text x="50" y="612" class="cell-bold">450KVA</text>
+<text x="135" y="612" class="cell-text">450</text>
+<line x1="100" y1="596" x2="100" y2="628" class="cell-border" />
+<text x="205" y="612" class="cell-text">360</text>
+<line x1="170" y1="596" x2="170" y2="628" class="cell-border" />
+<text x="275" y="612" class="cell-text">495</text>
+<line x1="240" y1="596" x2="240" y2="628" class="cell-border" />
+<text x="345" y="612" class="cell-text">396</text>
+<line x1="310" y1="596" x2="310" y2="628" class="cell-border" />
+<text x="465" y="612" class="cell-bold">2505A-E15TAG1</text>
+<line x1="380" y1="596" x2="380" y2="628" class="cell-border" />
+<text x="630" y="612" class="cell-text">340x113x222</text>
+<line x1="550" y1="596" x2="550" y2="628" class="cell-border" />
+<text x="785" y="612" class="cell-text">3900</text>
+<line x1="710" y1="596" x2="710" y2="628" class="cell-border" />
+<text x="930" y="612" class="cell-text">72</text>
+<line x1="860" y1="596" x2="860" y2="628" class="cell-border" />
+<rect x="0" y="628" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="660" x2="1000" y2="660" class="cell-border" />
+<text x="50" y="644" class="cell-bold">500KVA</text>
+<text x="135" y="644" class="cell-text">500</text>
+<line x1="100" y1="628" x2="100" y2="660" class="cell-border" />
+<text x="205" y="644" class="cell-text">400</text>
+<line x1="170" y1="628" x2="170" y2="660" class="cell-border" />
+<text x="275" y="644" class="cell-text">550</text>
+<line x1="240" y1="628" x2="240" y2="660" class="cell-border" />
+<text x="345" y="644" class="cell-text">440</text>
+<line x1="310" y1="628" x2="310" y2="660" class="cell-border" />
+<text x="465" y="644" class="cell-bold">2506A-E15TAG2</text>
+<line x1="380" y1="628" x2="380" y2="660" class="cell-border" />
+<text x="630" y="644" class="cell-text">340x113x222</text>
+<line x1="550" y1="628" x2="550" y2="660" class="cell-border" />
+<text x="785" y="644" class="cell-text">3900</text>
+<line x1="710" y1="628" x2="710" y2="660" class="cell-border" />
+<text x="930" y="644" class="cell-text">76</text>
+<line x1="860" y1="628" x2="860" y2="660" class="cell-border" />
+<rect x="0" y="660" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="692" x2="1000" y2="692" class="cell-border" />
+<text x="50" y="676" class="cell-bold">600KVA</text>
+<text x="135" y="676" class="cell-text">600</text>
+<line x1="100" y1="660" x2="100" y2="692" class="cell-border" />
+<text x="205" y="676" class="cell-text">480</text>
+<line x1="170" y1="660" x2="170" y2="692" class="cell-border" />
+<text x="275" y="676" class="cell-text">660</text>
+<line x1="240" y1="660" x2="240" y2="692" class="cell-border" />
+<text x="345" y="676" class="cell-text">528</text>
+<line x1="310" y1="660" x2="310" y2="692" class="cell-border" />
+<text x="465" y="676" class="cell-bold">2806A-E18TAG1A</text>
+<line x1="380" y1="660" x2="380" y2="692" class="cell-border" />
+<text x="630" y="676" class="cell-text">340x154x227</text>
+<line x1="550" y1="660" x2="550" y2="692" class="cell-border" />
+<text x="785" y="676" class="cell-text">4700</text>
+<line x1="710" y1="660" x2="710" y2="692" class="cell-border" />
+<text x="930" y="676" class="cell-text">90</text>
+<line x1="860" y1="660" x2="860" y2="692" class="cell-border" />
+<rect x="0" y="692" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="724" x2="1000" y2="724" class="cell-border" />
+<text x="50" y="708" class="cell-bold">650KVA</text>
+<text x="135" y="708" class="cell-text">650</text>
+<line x1="100" y1="692" x2="100" y2="724" class="cell-border" />
+<text x="205" y="708" class="cell-text">520</text>
+<line x1="170" y1="692" x2="170" y2="724" class="cell-border" />
+<text x="275" y="708" class="cell-text">710</text>
+<line x1="240" y1="692" x2="240" y2="724" class="cell-border" />
+<text x="345" y="708" class="cell-text">568</text>
+<line x1="310" y1="692" x2="310" y2="724" class="cell-border" />
+<text x="465" y="708" class="cell-bold">2806A-E18TAG2</text>
+<line x1="380" y1="692" x2="380" y2="724" class="cell-border" />
+<text x="630" y="708" class="cell-text">340x154x227</text>
+<line x1="550" y1="692" x2="550" y2="724" class="cell-border" />
+<text x="785" y="708" class="cell-text">4700</text>
+<line x1="710" y1="692" x2="710" y2="724" class="cell-border" />
+<text x="930" y="708" class="cell-text">97</text>
+<line x1="860" y1="692" x2="860" y2="724" class="cell-border" />
+<rect x="0" y="724" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="756" x2="1000" y2="756" class="cell-border" />
+<text x="50" y="740" class="cell-bold">750KVA</text>
+<text x="135" y="740" class="cell-text">750</text>
+<line x1="100" y1="724" x2="100" y2="756" class="cell-border" />
+<text x="205" y="740" class="cell-text">600</text>
+<line x1="170" y1="724" x2="170" y2="756" class="cell-border" />
+<text x="275" y="740" class="cell-text">825</text>
+<line x1="240" y1="724" x2="240" y2="756" class="cell-border" />
+<text x="345" y="740" class="cell-text">640</text>
+<line x1="310" y1="724" x2="310" y2="756" class="cell-border" />
+<text x="465" y="740" class="cell-bold">4006C-23TAG2A</text>
+<line x1="380" y1="724" x2="380" y2="756" class="cell-border" />
+<text x="630" y="740" class="cell-text">397x171x232</text>
+<line x1="550" y1="724" x2="550" y2="756" class="cell-border" />
+<text x="785" y="740" class="cell-text">5350</text>
+<line x1="710" y1="724" x2="710" y2="756" class="cell-border" />
+<text x="930" y="740" class="cell-text">120</text>
+<line x1="860" y1="724" x2="860" y2="756" class="cell-border" />
+<rect x="0" y="756" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="788" x2="1000" y2="788" class="cell-border" />
+<text x="50" y="772" class="cell-bold">800KVA</text>
+<text x="135" y="772" class="cell-text">800</text>
+<line x1="100" y1="756" x2="100" y2="788" class="cell-border" />
+<text x="205" y="772" class="cell-text">640</text>
+<line x1="170" y1="756" x2="170" y2="788" class="cell-border" />
+<text x="275" y="772" class="cell-text">880</text>
+<line x1="240" y1="756" x2="240" y2="788" class="cell-border" />
+<text x="345" y="772" class="cell-text">704</text>
+<line x1="310" y1="756" x2="310" y2="788" class="cell-border" />
+<text x="465" y="772" class="cell-bold">4006C-23TAG3A</text>
+<line x1="380" y1="756" x2="380" y2="788" class="cell-border" />
+<text x="630" y="772" class="cell-text">397x171x232</text>
+<line x1="550" y1="756" x2="550" y2="788" class="cell-border" />
+<text x="785" y="772" class="cell-text">6350</text>
+<line x1="710" y1="756" x2="710" y2="788" class="cell-border" />
+<text x="930" y="772" class="cell-text">130</text>
+<line x1="860" y1="756" x2="860" y2="788" class="cell-border" />
+<rect x="0" y="788" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="820" x2="1000" y2="820" class="cell-border" />
+<text x="50" y="804" class="cell-bold">900KVA</text>
+<text x="135" y="804" class="cell-text">900</text>
+<line x1="100" y1="788" x2="100" y2="820" class="cell-border" />
+<text x="205" y="804" class="cell-text">720</text>
+<line x1="170" y1="788" x2="170" y2="820" class="cell-border" />
+<text x="275" y="804" class="cell-text">990</text>
+<line x1="240" y1="788" x2="240" y2="820" class="cell-border" />
+<text x="345" y="804" class="cell-text">792</text>
+<line x1="310" y1="788" x2="310" y2="820" class="cell-border" />
+<text x="465" y="804" class="cell-bold">4008TAG1A</text>
+<line x1="380" y1="788" x2="380" y2="820" class="cell-border" />
+<text x="630" y="804" class="cell-text">397x171x232</text>
+<line x1="550" y1="788" x2="550" y2="820" class="cell-border" />
+<text x="785" y="804" class="cell-text">6350</text>
+<line x1="710" y1="788" x2="710" y2="820" class="cell-border" />
+<text x="930" y="804" class="cell-text">140</text>
+<line x1="860" y1="788" x2="860" y2="820" class="cell-border" />
+<rect x="0" y="820" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="852" x2="1000" y2="852" class="cell-border" />
+<text x="50" y="836" class="cell-bold">1000KVA</text>
+<text x="135" y="836" class="cell-text">1000</text>
+<line x1="100" y1="820" x2="100" y2="852" class="cell-border" />
+<text x="205" y="836" class="cell-text">800</text>
+<line x1="170" y1="820" x2="170" y2="852" class="cell-border" />
+<text x="275" y="836" class="cell-text">1100</text>
+<line x1="240" y1="820" x2="240" y2="852" class="cell-border" />
+<text x="345" y="836" class="cell-text">880</text>
+<line x1="310" y1="820" x2="310" y2="852" class="cell-border" />
+<text x="465" y="836" class="cell-bold">4008TAG2A</text>
+<line x1="380" y1="820" x2="380" y2="852" class="cell-border" />
+<text x="630" y="836" class="cell-text">465x205x227</text>
+<line x1="550" y1="820" x2="550" y2="852" class="cell-border" />
+<text x="785" y="836" class="cell-text">7500</text>
+<line x1="710" y1="820" x2="710" y2="852" class="cell-border" />
+<text x="930" y="836" class="cell-text">160</text>
+<line x1="860" y1="820" x2="860" y2="852" class="cell-border" />
+<rect x="0" y="852" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="884" x2="1000" y2="884" class="cell-border" />
+<text x="50" y="868" class="cell-bold">1025KVA</text>
+<text x="135" y="868" class="cell-text">1025</text>
+<line x1="100" y1="852" x2="100" y2="884" class="cell-border" />
+<text x="205" y="868" class="cell-text">820</text>
+<line x1="170" y1="852" x2="170" y2="884" class="cell-border" />
+<text x="275" y="868" class="cell-text">1125</text>
+<line x1="240" y1="852" x2="240" y2="884" class="cell-border" />
+<text x="345" y="868" class="cell-text">900</text>
+<line x1="310" y1="852" x2="310" y2="884" class="cell-border" />
+<text x="465" y="868" class="cell-bold">4008TAG2A</text>
+<line x1="380" y1="852" x2="380" y2="884" class="cell-border" />
+<text x="630" y="868" class="cell-text">465x205x227</text>
+<line x1="550" y1="852" x2="550" y2="884" class="cell-border" />
+<text x="785" y="868" class="cell-text">7500</text>
+<line x1="710" y1="852" x2="710" y2="884" class="cell-border" />
+<text x="930" y="868" class="cell-text">166</text>
+<line x1="860" y1="852" x2="860" y2="884" class="cell-border" />
+<rect x="0" y="884" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="916" x2="1000" y2="916" class="cell-border" />
+<text x="50" y="900" class="cell-bold">1250KVA</text>
+<text x="135" y="900" class="cell-text">1250</text>
+<line x1="100" y1="884" x2="100" y2="916" class="cell-border" />
+<text x="205" y="900" class="cell-text">1000</text>
+<line x1="170" y1="884" x2="170" y2="916" class="cell-border" />
+<text x="275" y="900" class="cell-text">1375</text>
+<line x1="240" y1="884" x2="240" y2="916" class="cell-border" />
+<text x="345" y="900" class="cell-text">1100</text>
+<line x1="310" y1="884" x2="310" y2="916" class="cell-border" />
+<text x="465" y="900" class="cell-bold">4012-6TWC2A</text>
+<line x1="380" y1="884" x2="380" y2="916" class="cell-border" />
+<text x="630" y="900" class="cell-text">473x178x245</text>
+<line x1="550" y1="884" x2="550" y2="916" class="cell-border" />
+<text x="785" y="900" class="cell-text">8900</text>
+<line x1="710" y1="884" x2="710" y2="916" class="cell-border" />
+<text x="930" y="900" class="cell-text">196</text>
+<line x1="860" y1="884" x2="860" y2="916" class="cell-border" />
+<rect x="0" y="916" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="948" x2="1000" y2="948" class="cell-border" />
+<text x="50" y="932" class="cell-bold">1360KVA</text>
+<text x="135" y="932" class="cell-text">1360</text>
+<line x1="100" y1="916" x2="100" y2="948" class="cell-border" />
+<text x="205" y="932" class="cell-text">1088</text>
+<line x1="170" y1="916" x2="170" y2="948" class="cell-border" />
+<text x="275" y="932" class="cell-text">1500</text>
+<line x1="240" y1="916" x2="240" y2="948" class="cell-border" />
+<text x="345" y="932" class="cell-text">1200</text>
+<line x1="310" y1="916" x2="310" y2="948" class="cell-border" />
+<text x="465" y="932" class="cell-bold">4012-46TWC34</text>
+<line x1="380" y1="916" x2="380" y2="948" class="cell-border" />
+<text x="630" y="932" class="cell-text">473x198x245</text>
+<line x1="550" y1="916" x2="550" y2="948" class="cell-border" />
+<text x="785" y="932" class="cell-text">9000</text>
+<line x1="710" y1="916" x2="710" y2="948" class="cell-border" />
+<text x="930" y="932" class="cell-text">213</text>
+<line x1="860" y1="916" x2="860" y2="948" class="cell-border" />
+<rect x="0" y="948" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="980" x2="1000" y2="980" class="cell-border" />
+<text x="50" y="964" class="cell-bold">1500KVA</text>
+<text x="135" y="964" class="cell-text">1500</text>
+<line x1="100" y1="948" x2="100" y2="980" class="cell-border" />
+<text x="205" y="964" class="cell-text">1200</text>
+<line x1="170" y1="948" x2="170" y2="980" class="cell-border" />
+<text x="275" y="964" class="cell-text">1650</text>
+<line x1="240" y1="948" x2="240" y2="980" class="cell-border" />
+<text x="345" y="964" class="cell-text">1320</text>
+<line x1="310" y1="948" x2="310" y2="980" class="cell-border" />
+<text x="465" y="964" class="cell-bold">4012-46TAG2A</text>
+<line x1="380" y1="948" x2="380" y2="980" class="cell-border" />
+<text x="630" y="964" class="cell-text">499x219x251</text>
+<line x1="550" y1="948" x2="550" y2="980" class="cell-border" />
+<text x="785" y="964" class="cell-text">10000</text>
+<line x1="710" y1="948" x2="710" y2="980" class="cell-border" />
+<text x="930" y="964" class="cell-text">235</text>
+<line x1="860" y1="948" x2="860" y2="980" class="cell-border" />
+<rect x="0" y="980" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="1012" x2="1000" y2="1012" class="cell-border" />
+<text x="50" y="996" class="cell-bold">1700KVA</text>
+<text x="135" y="996" class="cell-text">1700</text>
+<line x1="100" y1="980" x2="100" y2="1012" class="cell-border" />
+<text x="205" y="996" class="cell-text">1360</text>
+<line x1="170" y1="980" x2="170" y2="1012" class="cell-border" />
+<text x="275" y="996" class="cell-text">1870</text>
+<line x1="240" y1="980" x2="240" y2="1012" class="cell-border" />
+<text x="345" y="996" class="cell-text">1496</text>
+<line x1="310" y1="980" x2="310" y2="1012" class="cell-border" />
+<text x="465" y="996" class="cell-bold">4012-46TAG3A</text>
+<line x1="380" y1="980" x2="380" y2="1012" class="cell-border" />
+<text x="630" y="996" class="cell-text">510x216x251</text>
+<line x1="550" y1="980" x2="550" y2="1012" class="cell-border" />
+<text x="785" y="996" class="cell-text">10600</text>
+<line x1="710" y1="980" x2="710" y2="1012" class="cell-border" />
+<text x="930" y="996" class="cell-text">237</text>
+<line x1="860" y1="980" x2="860" y2="1012" class="cell-border" />
+<rect x="0" y="1012" width="1000" height="32" fill="#f8faf9" />
+<line x1="0" y1="1044" x2="1000" y2="1044" class="cell-border" />
+<text x="50" y="1028" class="cell-bold">1840KVA</text>
+<text x="135" y="1028" class="cell-text">1840</text>
+<line x1="100" y1="1012" x2="100" y2="1044" class="cell-border" />
+<text x="205" y="1028" class="cell-text">1472</text>
+<line x1="170" y1="1012" x2="170" y2="1044" class="cell-border" />
+<text x="275" y="1028" class="cell-text">2024</text>
+<line x1="240" y1="1012" x2="240" y2="1044" class="cell-border" />
+<text x="345" y="1028" class="cell-text">1619</text>
+<line x1="310" y1="1012" x2="310" y2="1044" class="cell-border" />
+<text x="465" y="1028" class="cell-bold">4016TAG1A</text>
+<line x1="380" y1="1012" x2="380" y2="1044" class="cell-border" />
+<text x="630" y="1028" class="cell-text">571x278x351</text>
+<line x1="550" y1="1012" x2="550" y2="1044" class="cell-border" />
+<text x="785" y="1028" class="cell-text">12000</text>
+<line x1="710" y1="1012" x2="710" y2="1044" class="cell-border" />
+<text x="930" y="1028" class="cell-text">240</text>
+<line x1="860" y1="1012" x2="860" y2="1044" class="cell-border" />
+<rect x="0" y="1044" width="1000" height="32" fill="#ffffff" />
+<line x1="0" y1="1076" x2="1000" y2="1076" class="cell-border" />
+<text x="50" y="1060" class="cell-bold">2000KVA</text>
+<text x="135" y="1060" class="cell-text">2000</text>
+<line x1="100" y1="1044" x2="100" y2="1076" class="cell-border" />
+<text x="205" y="1060" class="cell-text">1600</text>
+<line x1="170" y1="1044" x2="170" y2="1076" class="cell-border" />
+<text x="275" y="1060" class="cell-text">2200</text>
+<line x1="240" y1="1044" x2="240" y2="1076" class="cell-border" />
+<text x="345" y="1060" class="cell-text">1760</text>
+<line x1="310" y1="1044" x2="310" y2="1076" class="cell-border" />
+<text x="465" y="1060" class="cell-bold">4016TAG2A</text>
+<line x1="380" y1="1044" x2="380" y2="1076" class="cell-border" />
+<text x="630" y="1060" class="cell-text">571x278x351</text>
+<line x1="550" y1="1044" x2="550" y2="1076" class="cell-border" />
+<text x="785" y="1060" class="cell-text">13200</text>
+<line x1="710" y1="1044" x2="710" y2="1076" class="cell-border" />
+<text x="930" y="1060" class="cell-text">250</text>
+<line x1="860" y1="1044" x2="860" y2="1076" class="cell-border" />
+<rect x="1" y="1" width="998" height="1076" class="table-border" />
+</svg>

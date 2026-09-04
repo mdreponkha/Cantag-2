@@ -104,8 +104,9 @@ export const App: React.FC = () => {
 
   const [products, setProducts] = useState<ProductItem[]>(() => {
     try {
-      const saved = safeStorage.getItem('cpt_products');
+      const saved = safeStorage.getItem('cpt_products_v2');
       if (saved) return JSON.parse(saved);
+      safeStorage.removeItem('cpt_products');
     } catch (e) {
       console.error(e);
     }
@@ -352,7 +353,7 @@ export const App: React.FC = () => {
   const handleSaveToLocalStorage = (overrideData?: any) => {
     try {
       if (overrideData?.customizer || customizer) safeStorage.setItem('cpt_customizer', JSON.stringify(overrideData?.customizer || customizer));
-      if (overrideData?.products || products) safeStorage.setItem('cpt_products', JSON.stringify(overrideData?.products || products));
+      if (overrideData?.products || products) safeStorage.setItem('cpt_products_v2', JSON.stringify(overrideData?.products || products));
       if (overrideData?.services || services) safeStorage.setItem('cpt_services', JSON.stringify(overrideData?.services || services));
       if (overrideData?.projects || projects) safeStorage.setItem('cpt_projects', JSON.stringify(overrideData?.projects || projects));
       if (overrideData?.clients || clients) safeStorage.setItem('cpt_clients', JSON.stringify(overrideData?.clients || clients));

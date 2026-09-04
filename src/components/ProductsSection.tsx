@@ -46,10 +46,10 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
       ],
     },
     gas: {
-      title: gasProd?.name || 'Natural Gas Generators',
-      subtitle: gasProd?.description || 'Eco-friendly natural gas and biogas power generation systems engineered for continuous industrial baseload.',
-      image: gasProd?.imageUrl || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp',
-      capacity: gasProd?.capacityRange || '50 kVA – 2500 kVA',
+      title: gasProd?.name || 'TEKSAN Natural Gas & Biogas GenSets',
+      subtitle: gasProd?.description || 'High-efficiency continuous base-load natural gas and biogas generator systems designed for continuous operation in factories, reducing operating costs while adhering to environmental standards.',
+      image: gasProd?.imageUrl || 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80',
+      capacity: gasProd?.capacityRange || '50 kW – 2000 kW',
       productData: gasProd,
       features: (gasProd?.keyFeatures || (gasProd as any)?.features) && (gasProd?.keyFeatures || (gasProd as any)?.features).length > 0 ? (gasProd?.keyFeatures || (gasProd as any)?.features) : [
         'High electrical efficiency and low exhaust gas emissions',

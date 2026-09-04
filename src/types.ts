@@ -2,18 +2,22 @@ export type PageView = 'home' | 'about' | 'md-message' | 'ceo-message' | 'produc
 
 export interface GeneratorSpecRow {
   id: string;
-  model: string;          // e.g. "GF-15KW / GFS-15KW"
-  standbyKva: string;     // e.g. "20Kva"
-  standbyKw: string;      // e.g. "15Kw"
-  fuelCons: string;       // e.g. "3"
-  currentA: string;       // e.g. "27"
-  frequencyHz: string;    // e.g. "50"
-  rpm: string;            // e.g. "1500"
-  cylinders: string;      // e.g. "4"
-  engineModel: string;    // e.g. "395AD / 2100D"
-  alternatorModel: string;// e.g. "STC-15"
-  dimensionsMm: string;   // e.g. "1330X620X960 / 1430X720X1000"
-  weightKg: string;       // e.g. "650 / 820"
+  model: string;          // e.g. "13KVA" or "GF-15KW / GFS-15KW"
+  gensetRating?: string;  // e.g. "13KVA", "20KVA", etc.
+  primeKva?: string;      // e.g. "13"
+  primeKw?: string;       // e.g. "10.4"
+  standbyKva: string;     // e.g. "14.3" or "20Kva"
+  standbyKw: string;      // e.g. "11.44" or "15Kw"
+  fuelCons: string;       // e.g. "2.8" or "3"
+  currentA?: string;      // e.g. "27"
+  frequencyHz?: string;   // e.g. "50"
+  rpm?: string;           // e.g. "1500"
+  cylinders?: string;     // e.g. "4"
+  engineModel: string;    // e.g. "403D-15G" or "395AD / 2100D"
+  alternatorModel?: string;// e.g. "STC-15"
+  dimensionsMm?: string;  // e.g. "1330X620X960 / 1430X720X1000"
+  dimensionsCm?: string;  // e.g. "115x56x117" (LxWxH)
+  weightKg: string;       // e.g. "470" or "650 / 820"
   priceBdt?: string;      // e.g. "৳ 3,85,000" or "Call for Quote"
 }
 
@@ -39,6 +43,7 @@ export interface ProductItem {
   catalogPageNumber?: string;
   openGenImageUrl?: string;
   canopyGenImageUrl?: string;
+  catalogImageUrl?: string; // Direct link to uploaded catalog / technical datasheet photo
   specTableRows?: GeneratorSpecRow[];
   standardAccessories?: string[];
   warrantyInfo?: string;
