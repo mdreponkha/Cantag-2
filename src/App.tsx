@@ -24,7 +24,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { AdminLogin } from './components/AdminLogin';
 import { LiveChatWidget } from './components/LiveChatWidget';
 import { PRODUCTS_DATA, SERVICES_DATA, PROJECTS_DATA, CLIENTS_DATA } from './data/themeData';
-import { PERKINS_STANDARD_SPEC_ROWS, RICARDO_SPEC_ROWS } from './data/generatorSpecsData';
+import { PERKINS_STANDARD_SPEC_ROWS, RICARDO_SPEC_ROWS, DOOSAN_SPEC_ROWS, DOOSAN_PRICE_GUIDE_ROWS, CUMMINS_SPEC_ROWS, CUMMINS_PRICE_GUIDE_ROWS } from './data/generatorSpecsData';
 import { INITIAL_PAGES_CONTENT } from './data/pagesInitialData';
 import { safeStorage, safePushState, safeScrollTo } from './utils/storage';
 import { commitDatabaseToGitHub, fetchFromGitHubRaw } from './utils/githubSync';
@@ -115,6 +115,64 @@ export const App: React.FC = () => {
               const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
               const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
               return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
+            }
+            if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W') || p.description?.toLowerCase().includes('road-towable')) {
+              const rows = (p.specTableRows && p.specTableRows.length >= 5 && p.specTableRows.some((r: any) => r.model?.toLowerCase().includes('doosan') || r.engineModel?.toLowerCase().includes('db58t')))
+                ? p.specTableRows
+                : DOOSAN_SPEC_ROWS;
+              const priceRows = (p.priceTableRows && p.priceTableRows.length >= 10)
+                ? p.priceTableRows
+                : DOOSAN_PRICE_GUIDE_ROWS;
+              return {
+                ...p,
+                name: 'Doosan generator',
+                category: 'diesel',
+                categoryLabel: 'Doosan Series',
+                capacityRange: '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
+                engineMakes: 'Genuine Doosan Infracore Diesel Engine (South Korea)',
+                soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
+                fuelType: 'Diesel',
+                description: 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations in industrial factories, healthcare, and infrastructure projects.',
+                imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+                openGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+                canopyGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+                catalogImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+                catalogSheetTitle: 'DOOSAN GENERATOR — TECHNICAL SPECIFICATIONS & PRICE GUIDE',
+                catalogSubtitle: 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • Doosan ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)',
+                catalogPageNumber: 'Page-3',
+                specTableRows: rows,
+                priceTableRows: priceRows,
+                imageBadge: '60 kVA – 1000 kVA • Doosan Korea'
+              };
+            }
+            if (p.id === 'synchronization-panels' || p.name?.toLowerCase().includes('synchronization') || p.name?.toLowerCase().includes('cummins')) {
+              return {
+                ...p,
+                name: 'Cummins Diesel Generator',
+                category: 'diesel',
+                categoryLabel: 'Cummins Series',
+                capacityRange: '30 kVA – 1,000 kVA+ (৩০ kVA – ১০০০+ kVA)',
+                engineMakes: 'Genuine Cummins Heavy-Duty Diesel Engine (USA / UK / India / China)',
+                soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
+                fuelType: 'Diesel',
+                description: 'Cummins diesel generators come in various capacities for homes, offices, and factories. Below is a general capacity and estimated price chart in Bangladesh with genuine Cummins engines and soundproof acoustic canopies.',
+                imageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
+                openGenImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
+                canopyGenImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
+                catalogImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
+                catalogSheetTitle: 'Cummins diesel generator',
+                catalogSubtitle: 'Capacity (kVA) • Best Suited For • Estimated Price Range (BDT) in Bangladesh',
+                catalogPageNumber: 'Page-4',
+                specTableRows: CUMMINS_SPEC_ROWS,
+                cumminsPriceTableRows: CUMMINS_PRICE_GUIDE_ROWS,
+                imageBadge: '30 kVA – 1,000 kVA+ • Cummins',
+                keyFeatures: [
+                  'Cummins diesel generators come in various capacities for homes, offices, and factories.',
+                  'General capacity and estimated price chart in Bangladesh (30 kVA to 1,000 kVA+)',
+                  'Genuine Cummins heavy-duty industrial diesel engines (4B3.9, 4BT, 6BT, NTA855, KTA19, KTA38)',
+                  'Heavy-duty soundproof acoustic weather-resistant silent canopy with digital AMF controller'
+                ]
+              };
             }
             if ((p.id === 'diesel-generators' || p.category === 'diesel') && (!p.specTableRows || p.specTableRows.length < 5)) {
               return { ...p, specTableRows: RICARDO_SPEC_ROWS };
@@ -239,7 +297,47 @@ export const App: React.FC = () => {
     if (typeof d.version === 'number') setDbVersion(d.version);
     if (d.lastUpdated) setLastDatabaseUpdate(d.lastUpdated);
     if (d.customizer) setCustomizer(prev => ({ ...prev, ...d.customizer }));
-    if (Array.isArray(d.products) && d.products.length > 0) setProducts(d.products);
+    if (Array.isArray(d.products) && d.products.length > 0) {
+      const sanitized = d.products.map((p: any) => {
+        if (p.id === 'gas-generators' || p.category === 'gas') {
+          const rows = (p.specTableRows && p.specTableRows.length >= 10) ? p.specTableRows : PERKINS_STANDARD_SPEC_ROWS;
+          const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
+          const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
+          return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
+        }
+        if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W') || p.description?.toLowerCase().includes('road-towable')) {
+          const rows = (p.specTableRows && p.specTableRows.length >= 5 && p.specTableRows.some((r: any) => r.model?.toLowerCase().includes('doosan') || r.engineModel?.toLowerCase().includes('db58t')))
+            ? p.specTableRows
+            : DOOSAN_SPEC_ROWS;
+          const priceRows = (p.priceTableRows && p.priceTableRows.length >= 10)
+            ? p.priceTableRows
+            : DOOSAN_PRICE_GUIDE_ROWS;
+          return {
+            ...p,
+            name: 'Doosan generator',
+            category: 'diesel',
+            categoryLabel: 'Doosan Series',
+            capacityRange: '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
+            engineMakes: 'Genuine Doosan Infracore Diesel Engine (South Korea)',
+            soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
+            fuelType: 'Diesel',
+            description: 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations in industrial factories, healthcare, and infrastructure projects.',
+            imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+            openGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+            canopyGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+            catalogImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+            catalogSheetTitle: 'DOOSAN GENERATOR — TECHNICAL SPECIFICATIONS & PRICE GUIDE',
+            catalogSubtitle: 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • Doosan ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)',
+            catalogPageNumber: 'Page-3',
+            specTableRows: rows,
+            priceTableRows: priceRows,
+            imageBadge: '60 kVA – 1000 kVA • Doosan Korea'
+          };
+        }
+        return p;
+      });
+      setProducts(sanitized);
+    }
     if (Array.isArray(d.services) && d.services.length > 0) setServices(d.services);
     if (Array.isArray(d.projects) && d.projects.length > 0) setProjects(d.projects);
     if (Array.isArray(d.clients) && d.clients.length > 0) setClients(d.clients);

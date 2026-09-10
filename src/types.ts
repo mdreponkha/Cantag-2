@@ -21,6 +21,23 @@ export interface GeneratorSpecRow {
   priceBdt?: string;      // e.g. "৳ 3,85,000" or "Call for Quote"
 }
 
+export interface DoosanPriceRow {
+  id: string;
+  capacity: string;        // e.g. "৬০ kVA / ৫০ kW"
+  engineModel: string;     // e.g. "DB58"
+  priceRangeBdt: string;   // e.g. "৪,৫০,০০০ - ৫,৫০,০০০ টাকা"
+  kva?: number;
+}
+
+export interface CumminsPriceRow {
+  id: string;
+  capacity: string;        // e.g. "30 kVA"
+  bestSuitedFor: string;   // e.g. "Small homes, shops, and offices"
+  priceRangeBdt: string;   // e.g. "৳6,20,000 – ৳8,20,000"
+  kva?: number;
+  engineModel?: string;    // e.g. "4B3.9-G2"
+}
+
 export interface ProductItem {
   id: string;
   name: string;
@@ -45,6 +62,8 @@ export interface ProductItem {
   canopyGenImageUrl?: string;
   catalogImageUrl?: string; // Direct link to uploaded catalog / technical datasheet photo
   specTableRows?: GeneratorSpecRow[];
+  priceTableRows?: DoosanPriceRow[];
+  cumminsPriceTableRows?: CumminsPriceRow[];
   standardAccessories?: string[];
   warrantyInfo?: string;
 }

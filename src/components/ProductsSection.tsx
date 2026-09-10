@@ -28,8 +28,8 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
 
   const dieselProd = findCatProd('diesel', 0);
   const gasProd = findCatProd('gas', 1);
-  const syncProd = findCatProd('sync', 2);
-  const mobileProd = findCatProd('mobile', 3);
+  const syncProd = allProducts.find(p => p.id === 'synchronization-panels' || p.category === 'sync' || p.name?.toLowerCase().includes('cummins') || p.name?.toLowerCase().includes('sync')) || allProducts[3];
+  const mobileProd = allProducts.find(p => p.id === 'mobile-lighting' || p.category === 'mobile' || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W')) || allProducts[2];
 
   const productsByCategory = {
     diesel: {
@@ -59,29 +59,29 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
       ],
     },
     sync: {
-      title: syncProd?.name || 'Synchronization & ATS Panels',
-      subtitle: syncProd?.description || 'Intelligent multi-generator paralleling with DeepSea controllers for automated zero-break power transfer.',
-      image: syncProd?.imageUrl || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp',
-      capacity: syncProd?.capacityRange || 'Paralleling Up to 32 GenSets',
+      title: syncProd?.name || 'Cummins Diesel Generator',
+      subtitle: syncProd?.description || 'Cummins diesel generators come in various capacities for homes, offices, and factories with estimated price chart in Bangladesh (30 kVA – 1,000 kVA+).',
+      image: syncProd?.imageUrl || 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
+      capacity: syncProd?.capacityRange || '30 kVA – 1,000 kVA+',
       productData: syncProd,
       features: (syncProd?.keyFeatures || (syncProd as any)?.features) && (syncProd?.keyFeatures || (syncProd as any)?.features).length > 0 ? (syncProd?.keyFeatures || (syncProd as any)?.features) : [
-        'DeepSea DSE 8610 MKII load-sharing and auto-synchronizing',
-        'Automatic peak-lopping and fuel economy sequencing',
-        'Motorized ACB / MCCB protection systems',
-        'SCADA and Modbus remote monitoring interfaces',
+        'Genuine Cummins heavy-duty industrial diesel engines (4B3.9 to KTA38)',
+        'Heavy-duty soundproof acoustic weather-resistant silent canopy',
+        'Automatic transfer switch (ATS) & digital synchronization compatibility',
+        'Transparent Bangladesh estimated price guide (৳ 6.20 Lakh to ৳ 1.30 Crore+)',
       ],
     },
     mobile: {
-      title: mobileProd?.name || 'Mobile Generators & Lighting',
-      subtitle: mobileProd?.description || 'Road-towable silent generator trailers and heavy-duty industrial mobile LED lighting masts for construction and emergency response.',
-      image: mobileProd?.imageUrl || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp',
-      capacity: mobileProd?.capacityRange || '15 kVA – 500 kVA',
+      title: mobileProd?.name || 'Doosan generator',
+      subtitle: mobileProd?.description || 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations.',
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+      capacity: mobileProd?.capacityRange || '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
       productData: mobileProd,
       features: (mobileProd?.keyFeatures || (mobileProd as any)?.features) && (mobileProd?.keyFeatures || (mobileProd as any)?.features).length > 0 ? (mobileProd?.keyFeatures || (mobileProd as any)?.features) : [
-        'Heavy off-road suspension and integrated fuel storage tank',
-        'Ultra-silent acoustic enclosure for urban deployment',
-        'Hydraulic mast lighting with high-lumen LED floodlights',
-        'Fast hitch and quick connect distribution board',
+        'Genuine Doosan Infracore heavy-duty diesel engines (DB58 to DP222LC)',
+        'Complete Estimated Price List (৬০ kVA – ১০০০ kVA) in Bangladeshi Taka',
+        'Digital smart AMF auto start/stop controller with full protections',
+        'Heavy-duty weatherproof & acoustic soundproof canopy (68–72 dBA @ 7m)',
       ],
     },
   };
@@ -202,7 +202,11 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
                 <div>
                   <div className="w-full h-36 bg-slate-50 rounded-lg flex items-center justify-center p-3 mb-4 overflow-hidden">
                     <img
-                      src={prod.imageUrl || (prod as any).image || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp'}
+                      src={
+                        (prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan') || prod.name?.toLowerCase().includes('mobile') || prod.capacityRange?.includes('4x1000W'))
+                          ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10'
+                          : (prod.imageUrl || (prod as any).image || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp')
+                      }
                       alt={prod.name}
                       referrerPolicy="no-referrer"
                       className="max-h-full max-w-full object-contain"

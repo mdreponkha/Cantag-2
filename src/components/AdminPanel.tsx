@@ -70,7 +70,9 @@ import {
   RICARDO_SPEC_ROWS,
   PERKINS_STANDARD_SPEC_ROWS,
   MOBILE_LIGHTING_SPEC_ROWS,
-  SYNC_PANEL_SPEC_ROWS
+  SYNC_PANEL_SPEC_ROWS,
+  DOOSAN_SPEC_ROWS,
+  DOOSAN_PRICE_GUIDE_ROWS
 } from '../data/generatorSpecsData';
 import { PRODUCTS_DATA } from '../data/themeData';
 import { safeStorage, safePushState, safeScrollTo } from '../utils/storage';
@@ -2448,8 +2450,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         if (p.id === 'diesel-generators' || p.category === 'diesel') {
                           return { ...p, specTableRows: RICARDO_SPEC_ROWS };
                         }
-                        if (p.id === 'mobile-lighting') {
-                          return { ...p, specTableRows: MOBILE_LIGHTING_SPEC_ROWS };
+                        if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('doosan')) {
+                          return {
+                            ...p,
+                            specTableRows: DOOSAN_SPEC_ROWS,
+                            priceTableRows: DOOSAN_PRICE_GUIDE_ROWS
+                          };
                         }
                         if (p.id === 'synchronization-panels') {
                           return { ...p, specTableRows: SYNC_PANEL_SPEC_ROWS };
@@ -2521,7 +2527,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 {filteredProducts.map((prod) => {
                   const resolvedModelCount = (prod.specTableRows && prod.specTableRows.length > 0)
                     ? prod.specTableRows.length
-                    : (prod.id === 'gas-generators' || prod.category === 'gas' ? 31 : (prod.id === 'mobile-lighting' ? 4 : (prod.id === 'synchronization-panels' ? 3 : 13)));
+                    : (prod.id === 'gas-generators' || prod.category === 'gas' ? 31 : ((prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan')) ? 10 : (prod.id === 'synchronization-panels' ? 3 : 13)));
 
                   return (
                     <div
@@ -2566,10 +2572,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           onClick={() => {
                             const fallbackRows = (prod.id === 'gas-generators' || prod.category === 'gas')
                               ? PERKINS_STANDARD_SPEC_ROWS
-                              : (prod.id === 'mobile-lighting' ? MOBILE_LIGHTING_SPEC_ROWS : (prod.id === 'synchronization-panels' ? SYNC_PANEL_SPEC_ROWS : RICARDO_SPEC_ROWS));
+                              : ((prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan')) ? DOOSAN_SPEC_ROWS : (prod.id === 'synchronization-panels' ? SYNC_PANEL_SPEC_ROWS : RICARDO_SPEC_ROWS));
+                            const isDoosanProd = prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan');
                             setEditingProduct({
                               ...prod,
                               specTableRows: (prod.specTableRows && prod.specTableRows.length > 0) ? prod.specTableRows : fallbackRows,
+                              priceTableRows: (prod.priceTableRows && prod.priceTableRows.length > 0) ? prod.priceTableRows : (isDoosanProd ? DOOSAN_PRICE_GUIDE_ROWS : undefined),
                             });
                             setIsAddingProduct(false);
                           }}
