@@ -206,6 +206,13 @@ export async function fetchFromFirestore(): Promise<any | null> {
 }
 
 /**
+ * Sanitize object to remove undefined values so Firestore does not reject writes
+ */
+export function sanitizeForFirestore<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}
+
+/**
  * Save database content to Firestore
  */
 export async function saveToFirestore(data: any): Promise<{ success: boolean; message: string }> {
@@ -220,8 +227,9 @@ export async function saveToFirestore(data: any): Promise<{ success: boolean; me
   const docPath = `${COLLECTION_NAME}/${DOC_ID}`;
   try {
     const docRef = doc(db, COLLECTION_NAME, DOC_ID);
+    const sanitized = sanitizeForFirestore(data);
     const cleanData = {
-      ...data,
+      ...sanitized,
       lastUpdated: new Date().toISOString(),
     };
     await setDoc(docRef, cleanData, { merge: true });
@@ -236,6 +244,50 @@ export async function saveToFirestore(data: any): Promise<{ success: boolean; me
       message: `Firebase Save Error: ${err?.message || 'Unknown error'}`,
     };
   }
+}
+
+/**
+ * Permanently save an image document to Firestore so it survives container restarts
+ */
+export async function saveImageToFirestore(filename: string, dataUrl: string): Promise<boolean> {
+  const db = initFirestore();
+  if (!db || !dataUrl) return false;
+
+  try {
+    const cleanDocId = `img_${filename.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+    const docRef = doc(db, COLLECTION_NAME, cleanDocId);
+    await setDoc(docRef, {
+      id: cleanDocId,
+      filename,
+      dataUrl,
+      createdAt: new Date().toISOString(),
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn('Failed to save image backup to Firestore:', err);
+    return false;
+  }
+}
+
+/**
+ * Fetch a permanently saved image document from Firestore
+ */
+export async function fetchImageFromFirestore(filename: string): Promise<string | null> {
+  const db = initFirestore();
+  if (!db) return null;
+
+  try {
+    const cleanDocId = `img_${filename.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+    const docRef = doc(db, COLLECTION_NAME, cleanDocId);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      return data.dataUrl || null;
+    }
+  } catch (err) {
+    console.warn('Failed to fetch image from Firestore:', err);
+  }
+  return null;
 }
 
 /**

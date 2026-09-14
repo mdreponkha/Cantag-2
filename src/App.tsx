@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PageView, ProductItem, ProjectItem, ServiceItem, ClientItem, QuoteFormData, ThemeCustomizerState, PagesContentState } from './types';
 import { Header } from './components/Header';
 import { NavigationBar } from './components/NavigationBar';
@@ -335,10 +335,32 @@ export const App: React.FC = () => {
   // Worldwide Real-time Database Synchronization State
   const [dbVersion, setDbVersion] = useState<number>(1);
   const [lastDatabaseUpdate, setLastDatabaseUpdate] = useState<string>('');
+  const dbVersionRef = useRef<number>(1);
+  const activePageRef = useRef<PageView>(activePage);
 
-  const applyDatabaseData = (d: any) => {
+  useEffect(() => {
+    dbVersionRef.current = dbVersion;
+  }, [dbVersion]);
+
+  useEffect(() => {
+    activePageRef.current = activePage;
+  }, [activePage]);
+
+  const applyDatabaseData = (d: any, force = false) => {
     if (!d) return;
-    if (typeof d.version === 'number') setDbVersion(d.version);
+    // When user is currently in Admin Panel editing, don't overwrite their in-progress inputs unless forced
+    if (activePageRef.current === 'admin' && !force) {
+      if (typeof d.version === 'number') {
+        setDbVersion(d.version);
+        dbVersionRef.current = d.version;
+      }
+      return;
+    }
+
+    if (typeof d.version === 'number') {
+      setDbVersion(d.version);
+      dbVersionRef.current = d.version;
+    }
     if (d.lastUpdated) setLastDatabaseUpdate(d.lastUpdated);
     if (d.customizer) setCustomizer(prev => ({ ...prev, ...d.customizer }));
     if (Array.isArray(d.products) && d.products.length > 0) {
@@ -352,7 +374,11 @@ export const App: React.FC = () => {
       setPagesContent(prev => ({
         ...prev,
         ...d.pagesContent,
-        home: { ...prev.home, ...(d.pagesContent.home || {}) },
+        home: {
+          ...prev.home,
+          ...(d.pagesContent.home || {}),
+          heroSlides: d.pagesContent.home?.heroSlides?.length ? d.pagesContent.home.heroSlides : prev.home?.heroSlides,
+        },
         about: { ...prev.about, ...(d.pagesContent.about || {}) },
         mdMessage: { ...prev.mdMessage, ...(d.pagesContent.mdMessage || {}) },
         ceoMessage: { ...prev.ceoMessage, ...(d.pagesContent.ceoMessage || {}) },
@@ -371,7 +397,7 @@ export const App: React.FC = () => {
       const firestoreData = await fetchFromFirestore();
       if (firestoreData && (firestoreData.customizer || firestoreData.products || firestoreData.pagesContent)) {
         console.log('Applied live database from Firebase Firestore');
-        applyDatabaseData(firestoreData);
+        applyDatabaseData(firestoreData, true);
         return;
       }
     } catch (fsErr) {
@@ -384,7 +410,7 @@ export const App: React.FC = () => {
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
-          applyDatabaseData(json.data);
+          applyDatabaseData(json.data, true);
           return;
         }
       }
@@ -398,7 +424,7 @@ export const App: React.FC = () => {
       const rawData = await fetchFromGitHubRaw(savedRepo);
       if (rawData && (rawData.customizer || rawData.products || rawData.pagesContent)) {
         console.log('Applied live database from GitHub worldwide CDN');
-        applyDatabaseData(rawData);
+        applyDatabaseData(rawData, true);
       }
     } catch (cdnErr) {
       console.log('GitHub CDN fallback skipped:', cdnErr);
@@ -433,7 +459,10 @@ export const App: React.FC = () => {
           if (parsed.type === 'content_updated' && parsed.data) {
             applyDatabaseData(parsed.data);
           } else if (parsed.type === 'connected') {
-            if (parsed.version) setDbVersion(parsed.version);
+            if (parsed.version) {
+              setDbVersion(parsed.version);
+              dbVersionRef.current = parsed.version;
+            }
             if (parsed.lastUpdated) setLastDatabaseUpdate(parsed.lastUpdated);
           }
         } catch (parseErr) {
@@ -451,7 +480,7 @@ export const App: React.FC = () => {
     // 4. Fallback smart polling (every 5 seconds)
     const pollInterval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/sync/check?version=${dbVersion}`);
+        const res = await fetch(`/api/sync/check?version=${dbVersionRef.current}`);
         if (res.ok) {
           const checkData = await res.json();
           if (checkData.changed && checkData.data) {
@@ -468,7 +497,7 @@ export const App: React.FC = () => {
       if (eventSource) eventSource.close();
       clearInterval(pollInterval);
     };
-  }, [dbVersion]);
+  }, []);
 
   // Function to save everything to storage
   const handleSaveToLocalStorage = (overrideData?: any) => {
@@ -503,7 +532,12 @@ export const App: React.FC = () => {
       clients: { ...pagesContent.clients, ...(overrideData.pagesContent.clients || {}) },
     } : pagesContent;
 
+    const nextVersion = dbVersionRef.current + 1;
+    const nowIso = new Date().toISOString();
+
     const payload = {
+      version: nextVersion,
+      lastUpdated: nowIso,
       customizer: overrideData?.customizer ? { ...customizer, ...overrideData.customizer } : customizer,
       products: overrideData?.products ? sanitizeProductList(overrideData.products) : products,
       services: overrideData?.services ?? services,
@@ -521,6 +555,9 @@ export const App: React.FC = () => {
     if (payload.clients) setClients(payload.clients);
     if (payload.quotes) setQuotes(payload.quotes);
     if (payload.pagesContent) setPagesContent(payload.pagesContent);
+    setDbVersion(nextVersion);
+    dbVersionRef.current = nextVersion;
+    setLastDatabaseUpdate(nowIso);
 
     handleSaveToLocalStorage(payload);
 

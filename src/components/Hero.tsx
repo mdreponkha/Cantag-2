@@ -100,6 +100,13 @@ export const Hero: React.FC<HeroProps> = ({
                   alt={slide.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center transform scale-100 transition-transform duration-7000 ease-out"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    const fallback = defaultSlides[index % defaultSlides.length]?.image;
+                    if (fallback && target.src !== fallback) {
+                      target.src = fallback;
+                    }
+                  }}
                 />
                 {/* Visual Depth Overlay (Subtle gradient overlay to ensure perfect readability) */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#08192E]/85 via-[#08192E]/60 to-[#08192E]/85"></div>

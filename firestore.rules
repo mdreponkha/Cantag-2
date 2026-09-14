@@ -4,6 +4,9 @@ service cloud.firestore {
     match /canstar_site_data/{docId} {
       allow read, write: if true;
     }
+    match /canstar_images/{docId} {
+      allow read, write: if true;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

@@ -76,6 +76,7 @@ import {
 } from '../data/generatorSpecsData';
 import { PRODUCTS_DATA } from '../data/themeData';
 import { safeStorage, safePushState, safeScrollTo } from '../utils/storage';
+import { saveImageToFirestore } from '../utils/cloudDatabase';
 
 interface AdminPanelProps {
   setActivePage: (page: PageView) => void;
@@ -228,33 +229,77 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Logo URL quick input
   const [tempLogoUrl, setTempLogoUrl] = useState(customizer.logoUrl || '');
 
-  // Helper for uploading image files to server and returning immediate accessible URL
-  const uploadImageFile = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  // Helper to resize/compress image using canvas (max 1600px, 0.85 quality) to ensure fast uploads and persistent storage
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      if (file.type === 'image/svg+xml') {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      const img = new Image();
       const reader = new FileReader();
-      reader.onload = async () => {
-        const dataUrl = reader.result as string;
-        try {
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filename: file.name, dataUrl }),
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (json.success && json.url) {
-              resolve(json.url);
-              return;
+      reader.onload = (e) => {
+        img.onload = () => {
+          const maxDimension = 1600;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
             }
           }
-        } catch (e) {
-          console.warn('API upload fallback to dataUrl:', e);
-        }
-        resolve(dataUrl);
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const optimized = canvas.toDataURL('image/jpeg', 0.85);
+            resolve(optimized);
+          } else {
+            resolve(e.target?.result as string);
+          }
+        };
+        img.onerror = () => resolve(e.target?.result as string);
+        img.src = e.target?.result as string;
       };
-      reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+  };
+
+  // Helper for uploading image files to server and returning immediate accessible URL with persistent Firestore backup
+  const uploadImageFile = async (file: File): Promise<string> => {
+    try {
+      const dataUrl = await compressImage(file);
+      if (!dataUrl) return '';
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, dataUrl }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.url) {
+          // Backup directly to Firestore as well for maximum persistence
+          saveImageToFirestore(json.filename || file.name, dataUrl).catch(() => {});
+          return json.url;
+        }
+      }
+      // If server upload failed, use the optimized dataUrl directly
+      return dataUrl;
+    } catch (e) {
+      console.warn('Image upload fallback to compressed dataUrl:', e);
+      return await compressImage(file);
+    }
   };
 
   // Inline Image Upload Button Component for Admin forms
@@ -638,7 +683,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </button>
 
           <button
-            onClick={() => {
+            onClick={async () => {
+              await saveToBoth();
               safePushState({}, '', '/');
               setActivePage('home');
               safeScrollTo({ top: 0, behavior: 'smooth' });

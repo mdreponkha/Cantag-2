@@ -50,12 +50,61 @@ export async function syncToFirestoreAsync(data: any) {
     const db = getServerFirestore();
     if (db) {
       const ref = doc(db, 'canstar_site_data', 'main_content');
-      await setDoc(ref, data, { merge: true });
+      const sanitized = JSON.parse(JSON.stringify(data));
+      await setDoc(ref, sanitized, { merge: true });
+      console.log('Synced database to Firestore successfully');
     }
   } catch (fsErr) {
     console.warn('Server Firestore background sync notice:', fsErr);
   }
 }
+
+export async function hydrateDatabaseFromFirestore() {
+  try {
+    const db = getServerFirestore();
+    if (db) {
+      const snap = await getDoc(doc(db, 'canstar_site_data', 'main_content'));
+      if (snap.exists()) {
+        const firestoreData = snap.data();
+        if (firestoreData && (firestoreData.customizer || firestoreData.products || firestoreData.pagesContent)) {
+          const current = memoryDb || loadDatabase();
+          memoryDb = {
+            ...current,
+            ...firestoreData,
+            pagesContent: {
+              ...(current.pagesContent || {}),
+              ...(firestoreData.pagesContent || {}),
+              home: {
+                ...(current.pagesContent?.home || {}),
+                ...(firestoreData.pagesContent?.home || {})
+              },
+              mdMessage: {
+                ...(current.pagesContent?.mdMessage || {}),
+                ...(firestoreData.pagesContent?.mdMessage || {})
+              },
+              ceoMessage: {
+                ...(current.pagesContent?.ceoMessage || {}),
+                ...(firestoreData.pagesContent?.ceoMessage || {})
+              }
+            }
+          };
+          try {
+            if (!fs.existsSync(DATA_DIR)) {
+              fs.mkdirSync(DATA_DIR, { recursive: true });
+            }
+            fs.writeFileSync(DB_FILE, JSON.stringify(memoryDb, null, 2), 'utf-8');
+            console.log('Hydrated server database from Firestore successfully!');
+          } catch {}
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Firestore server hydration notice:', err);
+  }
+}
+
+// Initial async hydration on server boot
+hydrateDatabaseFromFirestore();
 
 // Initialize database data if not exists
 export function getInitialDb() {
@@ -246,7 +295,50 @@ export function createServerApp(): express.Express {
   app.use(express.json({ limit: '25mb' }));
   app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
-  // Serve uploaded images statically
+  // Serve uploaded images with persistent Firestore restoration fallback
+  app.get('/uploads/:filename', async (req, res, next) => {
+    try {
+      const filename = req.params.filename;
+      const localPath = path.join(UPLOADS_DIR, filename);
+      if (fs.existsSync(localPath)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.sendFile(localPath);
+      }
+
+      // If file not on disk (e.g. after container restart or redeploy), restore from Firestore!
+      const cleanDocId = `img_${filename.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+      const db = getServerFirestore();
+      if (db) {
+        const snap = await getDoc(doc(db, 'canstar_site_data', cleanDocId));
+        if (snap.exists()) {
+          const imgDoc = snap.data();
+          if (imgDoc && imgDoc.dataUrl) {
+            const matches = imgDoc.dataUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+              const mimeType = matches[1];
+              const buf = Buffer.from(matches[2], 'base64');
+              try {
+                if (!fs.existsSync(UPLOADS_DIR)) {
+                  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+                }
+                fs.writeFileSync(localPath, buf);
+              } catch (wErr) {
+                console.warn('Local disk cache write failed, streaming directly:', wErr);
+              }
+              res.setHeader('Content-Type', mimeType);
+              res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+              return res.send(buf);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Persistent image retrieval notice:', err);
+    }
+    next();
+  });
+
+  // Serve uploaded images statically if already on disk
   app.use('/uploads', express.static(UPLOADS_DIR));
 
   // CORS and options headers for cloud hosting compatibility
@@ -262,8 +354,8 @@ export function createServerApp(): express.Express {
 
   const router = express.Router();
 
-  // API: Direct Photo/Image Upload Handler (saves to /uploads/ and returns live URL)
-  router.post('/upload', (req, res) => {
+  // API: Direct Photo/Image Upload Handler (saves to /uploads/ and permanently to Firestore)
+  router.post('/upload', async (req, res) => {
     try {
       const { filename, dataUrl, base64 } = req.body;
       const rawData = dataUrl || base64;
@@ -274,10 +366,11 @@ export function createServerApp(): express.Express {
       // Extract format and pure base64 data
       const matches = rawData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       let ext = 'jpg';
+      let mimeType = 'image/jpeg';
       let buffer: Buffer;
 
       if (matches && matches.length === 3) {
-        const mimeType = matches[1];
+        mimeType = matches[1];
         if (mimeType.includes('png')) ext = 'png';
         else if (mimeType.includes('webp')) ext = 'webp';
         else if (mimeType.includes('svg')) ext = 'svg';
@@ -294,14 +387,40 @@ export function createServerApp(): express.Express {
       const uniqueName = `${cleanBase}_${Date.now()}.${ext}`;
       const filePath = path.join(UPLOADS_DIR, uniqueName);
 
-      fs.writeFileSync(filePath, buffer);
+      try {
+        if (!fs.existsSync(UPLOADS_DIR)) {
+          fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+        }
+        fs.writeFileSync(filePath, buffer);
+      } catch (writeErr) {
+        console.warn('Local disk cache write notice:', writeErr);
+      }
+
+      // Save permanently to Firestore so it NEVER disappears across container restarts
+      const cleanDocId = `img_${uniqueName.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+      try {
+        const db = getServerFirestore();
+        if (db) {
+          await setDoc(doc(db, 'canstar_site_data', cleanDocId), {
+            id: cleanDocId,
+            filename: uniqueName,
+            dataUrl: rawData,
+            mimeType,
+            createdAt: new Date().toISOString()
+          }, { merge: true });
+          console.log(`Saved image ${uniqueName} permanently to Firestore ${cleanDocId}`);
+        }
+      } catch (fsErr) {
+        console.warn('Firestore image persist error:', fsErr);
+      }
+
       const publicUrl = `/uploads/${uniqueName}`;
 
       res.json({
         success: true,
         url: publicUrl,
         filename: uniqueName,
-        message: 'Photo uploaded successfully!'
+        message: 'Photo uploaded and stored permanently!'
       });
     } catch (err: any) {
       console.error('Image upload error:', err);
