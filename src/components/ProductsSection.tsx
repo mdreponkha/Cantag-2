@@ -74,7 +74,7 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
     mobile: {
       title: mobileProd?.name || 'Doosan generator',
       subtitle: mobileProd?.description || 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations.',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
+      image: mobileProd?.imageUrl || mobileProd?.canopyGenImageUrl || mobileProd?.openGenImageUrl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
       capacity: mobileProd?.capacityRange || '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
       productData: mobileProd,
       features: (mobileProd?.keyFeatures || (mobileProd as any)?.features) && (mobileProd?.keyFeatures || (mobileProd as any)?.features).length > 0 ? (mobileProd?.keyFeatures || (mobileProd as any)?.features) : [
@@ -202,14 +202,18 @@ export const ProductsSection: React.FC<ProductsSectionProps> = ({
                 <div>
                   <div className="w-full h-36 bg-slate-50 rounded-lg flex items-center justify-center p-3 mb-4 overflow-hidden">
                     <img
+                      key={prod.imageUrl || prod.canopyGenImageUrl || prod.id}
                       src={
-                        (prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan') || prod.name?.toLowerCase().includes('mobile') || prod.capacityRange?.includes('4x1000W'))
+                        prod.imageUrl ||
+                        prod.canopyGenImageUrl ||
+                        prod.openGenImageUrl ||
+                        (prod.id === 'mobile-lighting' || prod.name?.toLowerCase().includes('doosan') || prod.name?.toLowerCase().includes('mobile')
                           ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10'
-                          : (prod.imageUrl || (prod as any).image || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp')
+                          : ((prod as any).image || 'https://www.kpowerbd.com/image/1750940252_685d3a5cb1f26.webp'))
                       }
                       alt={prod.name}
                       referrerPolicy="no-referrer"
-                      className="max-h-full max-w-full object-contain"
+                      className="max-h-full max-w-full object-contain transition-opacity duration-300"
                       onError={(e) => {
                         e.currentTarget.src = teksanGenImg;
                       }}

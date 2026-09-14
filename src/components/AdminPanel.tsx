@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   LayoutDashboard,
   FileText,
@@ -228,25 +228,102 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Logo URL quick input
   const [tempLogoUrl, setTempLogoUrl] = useState(customizer.logoUrl || '');
 
+  // Helper for uploading image files to server and returning immediate accessible URL
+  const uploadImageFile = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const dataUrl = reader.result as string;
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, dataUrl }),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json.success && json.url) {
+              resolve(json.url);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('API upload fallback to dataUrl:', e);
+        }
+        resolve(dataUrl);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Inline Image Upload Button Component for Admin forms
+  const ImageUploadBtn: React.FC<{
+    label?: string;
+    onUploaded: (url: string) => void;
+    className?: string;
+  }> = ({ label = 'Upload Photo', onUploaded, className = '' }) => {
+    const [isUploading, setIsUploading] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setIsUploading(true);
+      try {
+        const url = await uploadImageFile(file);
+        onUploaded(url);
+      } catch (err) {
+        console.error('Image upload failed:', err);
+      } finally {
+        setIsUploading(false);
+        if (inputRef.current) inputRef.current.value = '';
+      }
+    };
+
+    return (
+      <>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleChange}
+        />
+        <button
+          type="button"
+          disabled={isUploading}
+          onClick={() => inputRef.current?.click()}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-sky-600 hover:bg-sky-500 active:bg-sky-700 disabled:opacity-50 text-white text-xs font-bold transition shadow cursor-pointer ${className}`}
+        >
+          <Upload className="w-3.5 h-3.5" />
+          <span>{isUploading ? 'Uploading...' : label}</span>
+        </button>
+      </>
+    );
+  };
+
   // Global Save helper that writes to both LocalStorage and Central Database
   const saveToBoth = async (payloadOverride?: any, customMsg?: string) => {
-    onSaveToLocalStorage(payloadOverride);
+    const fullPayload = {
+      customizer,
+      products,
+      services,
+      projects,
+      clients,
+      quotes,
+      pagesContent,
+      ...payloadOverride
+    };
+    onSaveToLocalStorage(fullPayload);
     try {
       if (onSaveToDatabase) {
-        await onSaveToDatabase(payloadOverride);
+        await onSaveToDatabase(fullPayload);
       } else {
         await fetch('/api/content', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payloadOverride || {
-            customizer,
-            products,
-            services,
-            projects,
-            clients,
-            quotes,
-            pagesContent
-          }),
+          body: JSON.stringify(fullPayload),
         });
       }
     } catch (err) {
@@ -256,7 +333,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       setSaveSuccessMsg(customMsg);
       setTimeout(() => {
         setSaveSuccessMsg('');
-      }, 3500);
+      }, 4000);
     }
   };
 
@@ -298,16 +375,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   // Handlers for Products
   const handleSaveProduct = async (prod: ProductItem) => {
+    const resolvedProd = {
+      ...prod,
+      imageUrl: prod.imageUrl || prod.canopyGenImageUrl || prod.openGenImageUrl
+    };
     let updatedProducts: ProductItem[];
     if (isAddingProduct) {
-      updatedProducts = [prod, ...products];
+      updatedProducts = [resolvedProd, ...products];
     } else {
-      updatedProducts = products.map(p => p.id === prod.id ? prod : p);
+      updatedProducts = products.map(p => p.id === resolvedProd.id ? resolvedProd : p);
     }
     setProducts(updatedProducts);
     setEditingProduct(null);
     setIsAddingProduct(false);
-    await saveToBoth({ products: updatedProducts }, `✅ Product "${prod.name}" saved to database!`);
+    await saveToBoth({ products: updatedProducts }, `✅ Product "${resolvedProd.name}" saved to database!`);
   };
 
   const handleDeleteProduct = (id: string, name?: string) => {
@@ -446,9 +527,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const handleGlobalPublish = async () => {
     setIsSavingWorldwide(true);
-    onSaveToLocalStorage();
+    const fullPayload = {
+      customizer,
+      products,
+      services,
+      projects,
+      clients,
+      quotes,
+      pagesContent,
+    };
+    onSaveToLocalStorage(fullPayload);
     if (onSaveToDatabase) {
-      const ok = await onSaveToDatabase();
+      const ok = await onSaveToDatabase(fullPayload);
       if (ok) {
         triggerSaveNotification('✅ Saved to Central Database! All changes live worldwide.');
       } else {
@@ -1202,7 +1292,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                               <label className="block text-[11px] font-semibold text-slate-300 mb-1">
                                 Slide Background Photo URL / Image Link
                               </label>
-                              <div className="flex gap-2">
+                              <div className="flex flex-wrap gap-2">
                                 <input
                                   type="url"
                                   placeholder="https://... direct image link"
@@ -1215,7 +1305,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                                       home: { ...pagesContent.home, heroSlides: updated }
                                     });
                                   }}
-                                  className="flex-1 bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white font-mono"
+                                  className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white font-mono"
+                                />
+                                <ImageUploadBtn
+                                  label="Upload Photo"
+                                  onUploaded={(url) => {
+                                    const updated = [...(pagesContent.home.heroSlides || [])];
+                                    updated[sIndex] = { ...updated[sIndex], image: url };
+                                    const newContent = {
+                                      ...pagesContent,
+                                      home: { ...pagesContent.home, heroSlides: updated }
+                                    };
+                                    setPagesContent(newContent);
+                                    saveToBoth({ pagesContent: newContent }, `Slide #${sIndex + 1} photo uploaded!`);
+                                  }}
                                 />
                               </div>
                               {slide.image && (
@@ -1448,16 +1551,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         <label className="block text-xs font-semibold text-slate-300 mb-1">
                           About Section Equipment / Generator Photo URL
                         </label>
-                        <input
-                          type="url"
-                          placeholder="https://... direct image link"
-                          value={pagesContent.home.aboutImageUrl || ''}
-                          onChange={(e) => setPagesContent({
-                            ...pagesContent,
-                            home: { ...pagesContent.home, aboutImageUrl: e.target.value }
-                          })}
-                          className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white"
-                        />
+                        <div className="flex flex-wrap gap-2">
+                          <input
+                            type="url"
+                            placeholder="https://... direct image link"
+                            value={pagesContent.home.aboutImageUrl || ''}
+                            onChange={(e) => setPagesContent({
+                              ...pagesContent,
+                              home: { ...pagesContent.home, aboutImageUrl: e.target.value }
+                            })}
+                            className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white"
+                          />
+                          <ImageUploadBtn
+                            label="Upload Photo"
+                            onUploaded={(url) => {
+                              const newContent = {
+                                ...pagesContent,
+                                home: { ...pagesContent.home, aboutImageUrl: url }
+                              };
+                              setPagesContent(newContent);
+                              saveToBoth({ pagesContent: newContent }, 'About section photo uploaded!');
+                            }}
+                          />
+                        </div>
                         {pagesContent.home.aboutImageUrl && (
                           <div className="mt-2 flex items-center gap-3 p-2 bg-slate-950 rounded border border-slate-800">
                             <img
@@ -1578,16 +1694,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         <label className="block text-xs font-semibold text-slate-300 mb-1">
                           Soundproof Canopy Generator Photo Link
                         </label>
-                        <input
-                          type="url"
-                          placeholder="https://... image link"
-                          value={pagesContent.home.generationImageUrl || ''}
-                          onChange={(e) => setPagesContent({
-                            ...pagesContent,
-                            home: { ...pagesContent.home, generationImageUrl: e.target.value }
-                          })}
-                          className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white"
-                        />
+                        <div className="flex flex-wrap gap-2">
+                          <input
+                            type="url"
+                            placeholder="https://... image link"
+                            value={pagesContent.home.generationImageUrl || ''}
+                            onChange={(e) => setPagesContent({
+                              ...pagesContent,
+                              home: { ...pagesContent.home, generationImageUrl: e.target.value }
+                            })}
+                            className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white"
+                          />
+                          <ImageUploadBtn
+                            label="Upload Photo"
+                            onUploaded={(url) => {
+                              const newContent = {
+                                ...pagesContent,
+                                home: { ...pagesContent.home, generationImageUrl: url }
+                              };
+                              setPagesContent(newContent);
+                              saveToBoth({ pagesContent: newContent }, 'Canopy Generator photo uploaded!');
+                            }}
+                          />
+                        </div>
                         {pagesContent.home.generationImageUrl && (
                           <div className="mt-2 flex items-center gap-3 p-2 bg-slate-950 rounded border border-slate-800">
                             <img
@@ -1796,7 +1925,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <input
                           type="url"
                           placeholder="https://example.com/portrait.jpg or any image link (Google Drive, Postimg, Imgur)"
@@ -1805,7 +1934,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             ...pagesContent,
                             mdMessage: { ...pagesContent.mdMessage, photoUrl: e.target.value }
                           })}
-                          className="flex-1 bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                          className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                        />
+                        <ImageUploadBtn
+                          label="Upload MD Photo"
+                          onUploaded={(url) => {
+                            const newContent = {
+                              ...pagesContent,
+                              mdMessage: { ...pagesContent.mdMessage, photoUrl: url }
+                            };
+                            setPagesContent(newContent);
+                            saveToBoth({ pagesContent: newContent }, 'MD Official Portrait uploaded and saved!');
+                          }}
                         />
                       </div>
                       <p className="text-[11px] text-slate-400">
@@ -1953,7 +2093,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <input
                           type="url"
                           placeholder="https://example.com/portrait.jpg or any image link (Google Drive, Postimg, Imgur)"
@@ -1962,7 +2102,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             ...pagesContent,
                             ceoMessage: { ...pagesContent.ceoMessage, photoUrl: e.target.value }
                           })}
-                          className="flex-1 bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                          className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                        />
+                        <ImageUploadBtn
+                          label="Upload CEO Photo"
+                          onUploaded={(url) => {
+                            const newContent = {
+                              ...pagesContent,
+                              ceoMessage: { ...pagesContent.ceoMessage, photoUrl: url }
+                            };
+                            setPagesContent(newContent);
+                            saveToBoth({ pagesContent: newContent }, 'CEO Official Portrait uploaded and saved!');
+                          }}
                         />
                       </div>
                       <p className="text-[11px] text-slate-400">
@@ -3618,18 +3769,26 @@ fbq('track', 'PageView');
                       <label className="block text-xs font-semibold text-slate-300">
                         Image / Logo URL
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <input
                           type="url"
                           value={tempLogoUrl}
                           onChange={(e) => setTempLogoUrl(e.target.value)}
                           placeholder="Paste image URL (Blogger, Google, Imgur, CDN, etc.)"
-                          className="flex-1 bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                          className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                        />
+                        <ImageUploadBtn
+                          label="Upload Logo"
+                          onUploaded={(url) => {
+                            setTempLogoUrl(url);
+                            setCustomizer({ ...customizer, logoUrl: url });
+                            saveToBoth({ customizer: { ...customizer, logoUrl: url } }, 'Logo uploaded and saved to database!');
+                          }}
                         />
                         <button
                           onClick={() => {
                             setCustomizer({ ...customizer, logoUrl: tempLogoUrl });
-                            triggerSaveNotification('Logo URL updated!');
+                            triggerSaveNotification('Logo URL updated and saved!');
                           }}
                           className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition"
                         >
@@ -3981,13 +4140,25 @@ fbq('track', 'PageView');
 
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Main Catalog Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/... or image link"
-                  value={editingProduct.imageUrl || ''}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, imageUrl: e.target.value })}
-                  className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
-                />
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://images.unsplash.com/... or image link"
+                    value={editingProduct.imageUrl || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, imageUrl: e.target.value })}
+                    className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
+                  />
+                  <ImageUploadBtn
+                    label="Upload Photo"
+                    onUploaded={(url) => {
+                      setEditingProduct({
+                        ...editingProduct,
+                        imageUrl: url,
+                        canopyGenImageUrl: editingProduct.canopyGenImageUrl || url
+                      });
+                    }}
+                  />
+                </div>
                 {editingProduct.imageUrl && (
                   <div className="mt-2 flex items-center gap-3 p-2 bg-slate-900 rounded border border-slate-800">
                     <img
@@ -4004,14 +4175,26 @@ fbq('track', 'PageView');
               {/* Dual Generator Photos (Open Skid & Soundproof Canopy) matching user's photo */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-slate-900/80 rounded-lg border border-slate-800">
                 <div>
-                  <label className="block text-sky-300 text-xs font-bold mb-1">1. Open Skid Type Photo URL</label>
-                  <input
-                    type="url"
-                    placeholder="https://... Open Generator Image"
-                    value={editingProduct.openGenImageUrl || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, openGenImageUrl: e.target.value })}
-                    className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
-                  />
+                  <label className="block text-sky-300 text-xs font-bold mb-1">1. Open Skid Type Photo</label>
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://... Open Generator Image"
+                      value={editingProduct.openGenImageUrl || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, openGenImageUrl: e.target.value })}
+                      className="flex-1 min-w-[140px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
+                    />
+                    <ImageUploadBtn
+                      label="Upload"
+                      onUploaded={(url) => {
+                        setEditingProduct({
+                          ...editingProduct,
+                          openGenImageUrl: url,
+                          imageUrl: editingProduct.imageUrl || url
+                        });
+                      }}
+                    />
+                  </div>
                   {editingProduct.openGenImageUrl && (
                     <img
                       src={editingProduct.openGenImageUrl}
@@ -4022,14 +4205,26 @@ fbq('track', 'PageView');
                   )}
                 </div>
                 <div>
-                  <label className="block text-amber-300 text-xs font-bold mb-1">2. Soundproof Canopy Photo URL</label>
-                  <input
-                    type="url"
-                    placeholder="https://... Canopy Generator Image"
-                    value={editingProduct.canopyGenImageUrl || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, canopyGenImageUrl: e.target.value })}
-                    className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
-                  />
+                  <label className="block text-amber-300 text-xs font-bold mb-1">2. Soundproof Canopy Photo</label>
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://... Canopy Generator Image"
+                      value={editingProduct.canopyGenImageUrl || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, canopyGenImageUrl: e.target.value })}
+                      className="flex-1 min-w-[140px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-1.5 text-xs text-white"
+                    />
+                    <ImageUploadBtn
+                      label="Upload"
+                      onUploaded={(url) => {
+                        setEditingProduct({
+                          ...editingProduct,
+                          canopyGenImageUrl: url,
+                          imageUrl: editingProduct.imageUrl || url
+                        });
+                      }}
+                    />
+                  </div>
                   {editingProduct.canopyGenImageUrl && (
                     <img
                       src={editingProduct.canopyGenImageUrl}
@@ -4444,13 +4639,21 @@ fbq('track', 'PageView');
 
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Project Photo URL</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/... or direct photo link"
-                  value={editingProject.imageUrl || ''}
-                  onChange={(e) => setEditingProject({ ...editingProject, imageUrl: e.target.value })}
-                  className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
-                />
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://images.unsplash.com/... or direct photo link"
+                    value={editingProject.imageUrl || ''}
+                    onChange={(e) => setEditingProject({ ...editingProject, imageUrl: e.target.value })}
+                    className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
+                  />
+                  <ImageUploadBtn
+                    label="Upload Photo"
+                    onUploaded={(url) => {
+                      setEditingProject({ ...editingProject, imageUrl: url });
+                    }}
+                  />
+                </div>
                 {editingProject.imageUrl && (
                   <div className="mt-2 flex items-center gap-3 p-2 bg-slate-900 rounded border border-slate-800">
                     <img
@@ -4544,13 +4747,21 @@ fbq('track', 'PageView');
 
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Client Brand Logo / Photo URL</label>
-                <input
-                  type="url"
-                  placeholder="https://... logo image link"
-                  value={editingClient.logoUrl || ''}
-                  onChange={(e) => setEditingClient({ ...editingClient, logoUrl: e.target.value })}
-                  className="w-full bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
-                />
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://... logo image link"
+                    value={editingClient.logoUrl || ''}
+                    onChange={(e) => setEditingClient({ ...editingClient, logoUrl: e.target.value })}
+                    className="flex-1 min-w-[200px] bg-[#0F1E36] border border-slate-700 rounded px-3 py-2 text-white"
+                  />
+                  <ImageUploadBtn
+                    label="Upload Logo"
+                    onUploaded={(url) => {
+                      setEditingClient({ ...editingClient, logoUrl: url });
+                    }}
+                  />
+                </div>
                 {editingClient.logoUrl && (
                   <div className="mt-2 flex items-center gap-3 p-2 bg-slate-900 rounded border border-slate-800">
                     <img

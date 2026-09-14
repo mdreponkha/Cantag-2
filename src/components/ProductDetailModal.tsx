@@ -117,28 +117,33 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
   const hasPrimeRatings = !isDoosan && !isCummins && specRows.some(r => !!r.primeKva || !!r.gensetRating);
 
-  const doosanImageUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10';
-  const cumminsImageUrl = 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg';
+  const fallbackDoosanImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10';
+  const fallbackCumminsImage = 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg';
+  const fallbackDefaultImage = 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80';
 
-  const catalogTitle = isDoosan
+  const doosanImageUrl = product.canopyGenImageUrl || product.imageUrl || fallbackDoosanImage;
+  const cumminsImageUrl = product.canopyGenImageUrl || product.imageUrl || fallbackCumminsImage;
+  const defaultImage = isDoosan ? doosanImageUrl : isCummins ? cumminsImageUrl : (product.imageUrl || fallbackDefaultImage);
+
+  const catalogTitle = product.name || (isDoosan
     ? 'Doosan generator'
     : isCummins
     ? 'Cummins diesel generator'
-    : (product.catalogSheetTitle || `${product.name} Technical Datasheet`);
+    : (product.catalogSheetTitle || `${product.name} Technical Datasheet`));
 
-  const catalogSubtitle = isDoosan
+  const catalogSubtitle = product.catalogSubtitle || (isDoosan
     ? 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)'
     : isCummins
     ? 'Capacity (kVA) • Best Suited For • Estimated Price Range (BDT) in Bangladesh'
     : (product.catalogSubtitle || (hasPrimeRatings
         ? 'ORIGIN: UK / EUROPE • 50 HZ 1500 RPM 3-PHASE 400V/230V • PRIME & STANDBY LOAD RATINGS'
-        : 'ORIGIN: TURKEY / UK / CHINA • STANDBY & PRIME POWER • 50 HZ 1500 RPM 3-PHASE 400V/230V'));
+        : 'ORIGIN: TURKEY / UK / CHINA • STANDBY & PRIME POWER • 50 HZ 1500 RPM 3-PHASE 400V/230V')));
 
-  const pageNumber = isDoosan ? 'Page-3' : isCummins ? 'Page-4' : (product.catalogPageNumber || (hasPrimeRatings ? 'Page-1' : 'Page-4'));
+  const pageNumber = product.catalogPageNumber || (isDoosan ? 'Page-3' : isCummins ? 'Page-4' : (hasPrimeRatings ? 'Page-1' : 'Page-4'));
 
-  const openImage = isDoosan ? doosanImageUrl : isCummins ? cumminsImageUrl : (product.openGenImageUrl || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80');
-  const canopyImage = isDoosan ? doosanImageUrl : isCummins ? cumminsImageUrl : (product.canopyGenImageUrl || product.imageUrl || 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1000&q=80');
-  const customMainImage = product.imageUrl && product.imageUrl !== canopyImage && product.imageUrl !== openImage ? product.imageUrl : null;
+  const openImage = product.openGenImageUrl || product.imageUrl || defaultImage;
+  const canopyImage = product.canopyGenImageUrl || product.imageUrl || defaultImage;
+  const customMainImage = product.imageUrl && product.imageUrl !== canopyImage && product.imageUrl !== openImage ? product.imageUrl : (product.imageUrl || canopyImage);
 
   const selectedRow = specRows.find(r => r.id === selectedRowId);
   const selectedPriceRow = priceRows.find(r => r.id === selectedPriceRowId);

@@ -1,7 +1,8 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import { app } from './serverApp';
+import { app, loadDatabase } from './serverApp';
 
 export async function startServer() {
   const PORT = 3000;
@@ -12,6 +13,7 @@ export async function startServer() {
       server: { middlewareMode: true },
       appType: 'spa',
     });
+
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
@@ -30,3 +32,4 @@ export async function startServer() {
 startServer();
 
 export default app;
+

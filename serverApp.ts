@@ -1,6 +1,8 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 
 // Default initial data for database
 import { PRODUCTS_DATA, SERVICES_DATA, PROJECTS_DATA, CLIENTS_DATA, KPOWER_INFO } from './src/data/themeData';
@@ -9,11 +11,51 @@ import { INITIAL_PAGES_CONTENT } from './src/data/pagesInitialData';
 const IS_VERCEL = Boolean(process.env.VERCEL);
 const DATA_DIR = IS_VERCEL ? path.join('/tmp', 'data') : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'database.json');
+const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
+
+// Ensure uploads folder exists
+try {
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn('Could not create uploads dir:', e);
+}
 
 const DEFAULT_LOGO_URL = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO4zlpzfLK4DzN4fsgYH3a8b1hIUneK5r0XBLEQSCvsabtEB4_7qCQ0LqvWMv6DC3USKC9-DglXUL8YrbsKUXZXw0BhqkLzSrraHATr-P0HgX6XlsQWMSRa5nZMvN_v5xg__afGsL0K9QHI9DTywyDJ7MSh4JPuzfwGOSDyZXRKRRQdoSfoH5umx8BFpJX/s2073/ChatGPT%20Image%20Sep%202,%202026,%2006_29_20%20PM.png';
 
 // In-memory fallback cache
 let memoryDb: any = null;
+
+// Firebase Firestore Helper for Server-side Sync
+let serverFirestoreDb: any = null;
+function getServerFirestore() {
+  if (serverFirestoreDb) return serverFirestoreDb;
+  try {
+    const configPath = path.join(process.cwd(), 'firebase-applet-config.json');
+    if (fs.existsSync(configPath)) {
+      const cfg = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+      const app = getApps().length === 0 ? initializeApp(cfg) : getApp();
+      serverFirestoreDb = cfg.firestoreDatabaseId ? getFirestore(app, cfg.firestoreDatabaseId) : getFirestore(app);
+      return serverFirestoreDb;
+    }
+  } catch (err) {
+    console.warn('Server Firestore initialization notice:', err);
+  }
+  return null;
+}
+
+export async function syncToFirestoreAsync(data: any) {
+  try {
+    const db = getServerFirestore();
+    if (db) {
+      const ref = doc(db, 'canstar_site_data', 'main_content');
+      await setDoc(ref, data, { merge: true });
+    }
+  } catch (fsErr) {
+    console.warn('Server Firestore background sync notice:', fsErr);
+  }
+}
 
 // Initialize database data if not exists
 export function getInitialDb() {
@@ -186,6 +228,9 @@ export function saveDatabase(data: any, eventType = 'content_updated') {
       console.warn('Filesystem write not permitted in current runtime, stored in memory cache:', err);
     }
 
+    // Keep Firestore cloud database in continuous sync
+    syncToFirestoreAsync(data);
+
     broadcastDatabaseUpdate(data, eventType);
     return true;
   } catch (err) {
@@ -198,7 +243,11 @@ export function saveDatabase(data: any, eventType = 'content_updated') {
 export function createServerApp(): express.Express {
   const app = express();
 
-  app.use(express.json({ limit: '15mb' }));
+  app.use(express.json({ limit: '25mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+
+  // Serve uploaded images statically
+  app.use('/uploads', express.static(UPLOADS_DIR));
 
   // CORS and options headers for cloud hosting compatibility
   app.use((req, res, next) => {
@@ -212,6 +261,53 @@ export function createServerApp(): express.Express {
   });
 
   const router = express.Router();
+
+  // API: Direct Photo/Image Upload Handler (saves to /uploads/ and returns live URL)
+  router.post('/upload', (req, res) => {
+    try {
+      const { filename, dataUrl, base64 } = req.body;
+      const rawData = dataUrl || base64;
+      if (!rawData) {
+        return res.status(400).json({ success: false, message: 'No image data provided.' });
+      }
+
+      // Extract format and pure base64 data
+      const matches = rawData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      let ext = 'jpg';
+      let buffer: Buffer;
+
+      if (matches && matches.length === 3) {
+        const mimeType = matches[1];
+        if (mimeType.includes('png')) ext = 'png';
+        else if (mimeType.includes('webp')) ext = 'webp';
+        else if (mimeType.includes('svg')) ext = 'svg';
+        else if (mimeType.includes('gif')) ext = 'gif';
+        buffer = Buffer.from(matches[2], 'base64');
+      } else {
+        buffer = Buffer.from(rawData, 'base64');
+      }
+
+      const cleanBase = (filename || 'img')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .replace(/_{2,}/g, '_')
+        .slice(0, 40);
+      const uniqueName = `${cleanBase}_${Date.now()}.${ext}`;
+      const filePath = path.join(UPLOADS_DIR, uniqueName);
+
+      fs.writeFileSync(filePath, buffer);
+      const publicUrl = `/uploads/${uniqueName}`;
+
+      res.json({
+        success: true,
+        url: publicUrl,
+        filename: uniqueName,
+        message: 'Photo uploaded successfully!'
+      });
+    } catch (err: any) {
+      console.error('Image upload error:', err);
+      res.status(500).json({ success: false, message: err?.message || 'Failed to process image upload.' });
+    }
+  });
 
   // API 1: Health & Database connection check
   router.get('/health', (req, res) => {

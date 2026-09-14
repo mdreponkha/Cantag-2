@@ -37,6 +37,108 @@ import {
 
 const DEFAULT_LOGO_URL = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiO4zlpzfLK4DzN4fsgYH3a8b1hIUneK5r0XBLEQSCvsabtEB4_7qCQ0LqvWMv6DC3USKC9-DglXUL8YrbsKUXZXw0BhqkLzSrraHATr-P0HgX6XlsQWMSRa5nZMvN_v5xg__afGsL0K9QHI9DTywyDJ7MSh4JPuzfwGOSDyZXRKRRQdoSfoH5umx8BFpJX/s2073/ChatGPT%20Image%20Sep%202,%202026,%2006_29_20%20PM.png';
 
+const DEFAULT_CUSTOMIZER: ThemeCustomizerState = {
+  logoUrl: DEFAULT_LOGO_URL,
+  primaryColor: '#08192E',
+  accentColor: '#2563EB',
+  heroHeadline: 'Reliable Power for Secure Data',
+  heroSubheadline: 'With Teksan generator sets that comply with Uptime Institute Tier III and Tier IV requirements, all data is secure.',
+  heroBadge: 'TIER III & TIER IV COMPLIANT',
+  phone: '01300-746860',
+  emergencyPhone: '01300-746860',
+  email: 'info@canstarpowertech.com',
+  address: '102/1, Fakirapoool (2nd Floor), Safayet Ullah Lane, Motijheel, Dhaka-1000, Dhaka, Bangladesh',
+  activeFont: 'Outfit',
+  suppliedUnits: '1200+ Units in Bangladesh',
+  uptimeGuarantee: '99.9%',
+  completedProjects: '1000+'
+};
+
+// Retrieve synchronous server-injected state on mount to prevent any flicker of old data
+function getInitialServerDb() {
+  if (typeof window !== 'undefined' && (window as any).__INITIAL_DATA__) {
+    return (window as any).__INITIAL_DATA__;
+  }
+  return null;
+}
+
+// Sanitize and preserve user customizations for all generator product series
+function sanitizeProductList(list: any[]): ProductItem[] {
+  if (!Array.isArray(list) || list.length === 0) return PRODUCTS_DATA;
+  return list.map((p: any) => {
+    if (p.id === 'gas-generators' || p.category === 'gas') {
+      const rows = (p.specTableRows && p.specTableRows.length >= 10) ? p.specTableRows : PERKINS_STANDARD_SPEC_ROWS;
+      const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
+      const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
+      return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
+    }
+    if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W') || p.description?.toLowerCase().includes('road-towable')) {
+      const rows = (p.specTableRows && p.specTableRows.length >= 5 && p.specTableRows.some((r: any) => r.model?.toLowerCase().includes('doosan') || r.engineModel?.toLowerCase().includes('db58t')))
+        ? p.specTableRows
+        : DOOSAN_SPEC_ROWS;
+      const priceRows = (p.priceTableRows && p.priceTableRows.length >= 10)
+        ? p.priceTableRows
+        : DOOSAN_PRICE_GUIDE_ROWS;
+      const defaultDoosanImg = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10';
+      return {
+        ...p,
+        name: p.name || 'Doosan generator',
+        category: p.category || 'diesel',
+        categoryLabel: p.categoryLabel || 'Doosan Series',
+        capacityRange: p.capacityRange || '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
+        engineMakes: p.engineMakes || 'Genuine Doosan Infracore Diesel Engine (South Korea)',
+        soundLevel: p.soundLevel || '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
+        fuelType: p.fuelType || 'Diesel',
+        description: p.description || 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations in industrial factories, healthcare, and infrastructure projects.',
+        imageUrl: p.imageUrl || defaultDoosanImg,
+        openGenImageUrl: p.openGenImageUrl || p.imageUrl || defaultDoosanImg,
+        canopyGenImageUrl: p.canopyGenImageUrl || p.imageUrl || defaultDoosanImg,
+        catalogImageUrl: p.catalogImageUrl || p.imageUrl || defaultDoosanImg,
+        catalogSheetTitle: p.catalogSheetTitle || 'DOOSAN GENERATOR — TECHNICAL SPECIFICATIONS & PRICE GUIDE',
+        catalogSubtitle: p.catalogSubtitle || 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • Doosan ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)',
+        catalogPageNumber: p.catalogPageNumber || 'Page-3',
+        specTableRows: rows,
+        priceTableRows: priceRows,
+        imageBadge: p.imageBadge || '60 kVA – 1000 kVA • Doosan Korea'
+      };
+    }
+    if (p.id === 'synchronization-panels' || p.name?.toLowerCase().includes('synchronization') || p.name?.toLowerCase().includes('cummins')) {
+      const defaultCumminsImg = 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg';
+      return {
+        ...p,
+        name: p.name || 'Cummins Diesel Generator',
+        category: p.category || 'diesel',
+        categoryLabel: p.categoryLabel || 'Cummins Series',
+        capacityRange: p.capacityRange || '30 kVA – 1,000 kVA+ (৩০ kVA – ১০০০+ kVA)',
+        engineMakes: p.engineMakes || 'Genuine Cummins Heavy-Duty Diesel Engine (USA / UK / India / China)',
+        soundLevel: p.soundLevel || '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
+        fuelType: p.fuelType || 'Diesel',
+        description: p.description || 'Cummins diesel generators come in various capacities for homes, offices, and factories. Below is a general capacity and estimated price chart in Bangladesh with genuine Cummins engines and soundproof acoustic canopies.',
+        imageUrl: p.imageUrl || defaultCumminsImg,
+        openGenImageUrl: p.openGenImageUrl || p.imageUrl || defaultCumminsImg,
+        canopyGenImageUrl: p.canopyGenImageUrl || p.imageUrl || defaultCumminsImg,
+        catalogImageUrl: p.catalogImageUrl || p.imageUrl || defaultCumminsImg,
+        catalogSheetTitle: p.catalogSheetTitle || 'Cummins diesel generator',
+        catalogSubtitle: p.catalogSubtitle || 'Capacity (kVA) • Best Suited For • Estimated Price Range (BDT) in Bangladesh',
+        catalogPageNumber: p.catalogPageNumber || 'Page-4',
+        specTableRows: (p.specTableRows && p.specTableRows.length >= 5) ? p.specTableRows : CUMMINS_SPEC_ROWS,
+        cumminsPriceTableRows: (p.cumminsPriceTableRows && p.cumminsPriceTableRows.length >= 5) ? p.cumminsPriceTableRows : CUMMINS_PRICE_GUIDE_ROWS,
+        imageBadge: p.imageBadge || '30 kVA – 1,000 kVA+ • Cummins',
+        keyFeatures: p.keyFeatures || [
+          'Cummins diesel generators come in various capacities for homes, offices, and factories.',
+          'General capacity and estimated price chart in Bangladesh (30 kVA to 1,000 kVA+)',
+          'Genuine Cummins heavy-duty industrial diesel engines (4B3.9, 4BT, 6BT, NTA855, KTA19, KTA38)',
+          'Heavy-duty soundproof acoustic weather-resistant silent canopy with digital AMF controller'
+        ]
+      };
+    }
+    if ((p.id === 'diesel-generators' || p.category === 'diesel') && (!p.specTableRows || p.specTableRows.length < 5)) {
+      return { ...p, specTableRows: RICARDO_SPEC_ROWS };
+    }
+    return p;
+  });
+}
+
 export const App: React.FC = () => {
   // Check if current URL or hash is /admin
   const checkIsAdmin = () => {
@@ -71,9 +173,17 @@ export const App: React.FC = () => {
     }
   });
 
-  // Dynamic state loaded from safeStorage if available
+  // Dynamic state loaded synchronously from server-injected data, or safeStorage, or defaults
+  const initialServerDb = getInitialServerDb();
+
   const [customizer, setCustomizer] = useState<ThemeCustomizerState>(() => {
     try {
+      if (initialServerDb?.customizer) {
+        return {
+          ...initialServerDb.customizer,
+          logoUrl: initialServerDb.customizer.logoUrl || DEFAULT_LOGO_URL
+        };
+      }
       const saved = safeStorage.getItem('cpt_customizer');
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -85,111 +195,33 @@ export const App: React.FC = () => {
     } catch (e) {
       console.error(e);
     }
-    return {
-      logoUrl: DEFAULT_LOGO_URL,
-      primaryColor: '#08192E',
-      accentColor: '#2563EB',
-      heroHeadline: 'Reliable Power for Secure Data',
-      heroSubheadline: 'With Teksan generator sets that comply with Uptime Institute Tier III and Tier IV requirements, all data is secure.',
-      heroBadge: 'TIER III & TIER IV COMPLIANT',
-      phone: '01300-746860',
-      emergencyPhone: '01300-746860',
-      email: 'info@canstarpowertech.com',
-      address: '102/1, Fakirapoool (2nd Floor), Safayet Ullah Lane, Motijheel, Dhaka-1000, Dhaka, Bangladesh',
-      activeFont: 'Outfit',
-      suppliedUnits: '1200+ Units in Bangladesh',
-      uptimeGuarantee: '99.9%',
-      completedProjects: '1000+'
-    };
+    return DEFAULT_CUSTOMIZER;
   });
 
   const [products, setProducts] = useState<ProductItem[]>(() => {
     try {
+      if (initialServerDb?.products && Array.isArray(initialServerDb.products) && initialServerDb.products.length > 0) {
+        return sanitizeProductList(initialServerDb.products);
+      }
       const saved = safeStorage.getItem('cpt_products_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((p: any) => {
-            if (p.id === 'gas-generators' || p.category === 'gas') {
-              const rows = (p.specTableRows && p.specTableRows.length >= 10) ? p.specTableRows : PERKINS_STANDARD_SPEC_ROWS;
-              const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
-              const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
-              return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
-            }
-            if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W') || p.description?.toLowerCase().includes('road-towable')) {
-              const rows = (p.specTableRows && p.specTableRows.length >= 5 && p.specTableRows.some((r: any) => r.model?.toLowerCase().includes('doosan') || r.engineModel?.toLowerCase().includes('db58t')))
-                ? p.specTableRows
-                : DOOSAN_SPEC_ROWS;
-              const priceRows = (p.priceTableRows && p.priceTableRows.length >= 10)
-                ? p.priceTableRows
-                : DOOSAN_PRICE_GUIDE_ROWS;
-              return {
-                ...p,
-                name: 'Doosan generator',
-                category: 'diesel',
-                categoryLabel: 'Doosan Series',
-                capacityRange: '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
-                engineMakes: 'Genuine Doosan Infracore Diesel Engine (South Korea)',
-                soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
-                fuelType: 'Diesel',
-                description: 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations in industrial factories, healthcare, and infrastructure projects.',
-                imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-                openGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-                canopyGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-                catalogImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-                catalogSheetTitle: 'DOOSAN GENERATOR — TECHNICAL SPECIFICATIONS & PRICE GUIDE',
-                catalogSubtitle: 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • Doosan ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)',
-                catalogPageNumber: 'Page-3',
-                specTableRows: rows,
-                priceTableRows: priceRows,
-                imageBadge: '60 kVA – 1000 kVA • Doosan Korea'
-              };
-            }
-            if (p.id === 'synchronization-panels' || p.name?.toLowerCase().includes('synchronization') || p.name?.toLowerCase().includes('cummins')) {
-              return {
-                ...p,
-                name: 'Cummins Diesel Generator',
-                category: 'diesel',
-                categoryLabel: 'Cummins Series',
-                capacityRange: '30 kVA – 1,000 kVA+ (৩০ kVA – ১০০০+ kVA)',
-                engineMakes: 'Genuine Cummins Heavy-Duty Diesel Engine (USA / UK / India / China)',
-                soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
-                fuelType: 'Diesel',
-                description: 'Cummins diesel generators come in various capacities for homes, offices, and factories. Below is a general capacity and estimated price chart in Bangladesh with genuine Cummins engines and soundproof acoustic canopies.',
-                imageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
-                openGenImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
-                canopyGenImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
-                catalogImageUrl: 'https://cdn.ade-power.com/assets/img/generators/cummins/33kva-38kva-cummins-silent-diesel-generator-cummins-c33d5-c38d5.jpg',
-                catalogSheetTitle: 'Cummins diesel generator',
-                catalogSubtitle: 'Capacity (kVA) • Best Suited For • Estimated Price Range (BDT) in Bangladesh',
-                catalogPageNumber: 'Page-4',
-                specTableRows: CUMMINS_SPEC_ROWS,
-                cumminsPriceTableRows: CUMMINS_PRICE_GUIDE_ROWS,
-                imageBadge: '30 kVA – 1,000 kVA+ • Cummins',
-                keyFeatures: [
-                  'Cummins diesel generators come in various capacities for homes, offices, and factories.',
-                  'General capacity and estimated price chart in Bangladesh (30 kVA to 1,000 kVA+)',
-                  'Genuine Cummins heavy-duty industrial diesel engines (4B3.9, 4BT, 6BT, NTA855, KTA19, KTA38)',
-                  'Heavy-duty soundproof acoustic weather-resistant silent canopy with digital AMF controller'
-                ]
-              };
-            }
-            if ((p.id === 'diesel-generators' || p.category === 'diesel') && (!p.specTableRows || p.specTableRows.length < 5)) {
-              return { ...p, specTableRows: RICARDO_SPEC_ROWS };
-            }
-            return p;
-          });
+          return sanitizeProductList(parsed);
         }
       }
       safeStorage.removeItem('cpt_products');
     } catch (e) {
       console.error(e);
     }
-    return PRODUCTS_DATA;
+    return sanitizeProductList(PRODUCTS_DATA);
   });
 
   const [services, setServices] = useState<ServiceItem[]>(() => {
     try {
+      if (initialServerDb?.services && Array.isArray(initialServerDb.services) && initialServerDb.services.length > 0) {
+        return initialServerDb.services;
+      }
       const saved = safeStorage.getItem('cpt_services');
       if (saved) return JSON.parse(saved);
     } catch (e) {
@@ -200,6 +232,9 @@ export const App: React.FC = () => {
 
   const [projects, setProjects] = useState<ProjectItem[]>(() => {
     try {
+      if (initialServerDb?.projects && Array.isArray(initialServerDb.projects) && initialServerDb.projects.length > 0) {
+        return initialServerDb.projects;
+      }
       const saved = safeStorage.getItem('cpt_projects');
       if (saved) return JSON.parse(saved);
     } catch (e) {
@@ -210,6 +245,9 @@ export const App: React.FC = () => {
 
   const [clients, setClients] = useState<ClientItem[]>(() => {
     try {
+      if (initialServerDb?.clients && Array.isArray(initialServerDb.clients) && initialServerDb.clients.length > 0) {
+        return initialServerDb.clients;
+      }
       const saved = safeStorage.getItem('cpt_clients');
       if (saved) return JSON.parse(saved);
     } catch (e) {
@@ -220,6 +258,9 @@ export const App: React.FC = () => {
 
   const [quotes, setQuotes] = useState<QuoteFormData[]>(() => {
     try {
+      if (initialServerDb?.quotes && Array.isArray(initialServerDb.quotes)) {
+        return initialServerDb.quotes;
+      }
       const saved = safeStorage.getItem('cpt_quotes');
       if (saved) return JSON.parse(saved);
     } catch (e) {
@@ -257,6 +298,9 @@ export const App: React.FC = () => {
 
   const [pagesContent, setPagesContent] = useState<PagesContentState>(() => {
     try {
+      if (initialServerDb?.pagesContent) {
+        return initialServerDb.pagesContent;
+      }
       const saved = safeStorage.getItem('cpt_pages_content');
       if (saved) return JSON.parse(saved);
     } catch (e) {
@@ -298,45 +342,7 @@ export const App: React.FC = () => {
     if (d.lastUpdated) setLastDatabaseUpdate(d.lastUpdated);
     if (d.customizer) setCustomizer(prev => ({ ...prev, ...d.customizer }));
     if (Array.isArray(d.products) && d.products.length > 0) {
-      const sanitized = d.products.map((p: any) => {
-        if (p.id === 'gas-generators' || p.category === 'gas') {
-          const rows = (p.specTableRows && p.specTableRows.length >= 10) ? p.specTableRows : PERKINS_STANDARD_SPEC_ROWS;
-          const engine = (p.engineMakes && !p.engineMakes.includes('Lean-Burn')) ? p.engineMakes : 'Genuine Perkins / Teksan High-Efficiency Industrial Series';
-          const acoustic = (p.soundLevel && !p.soundLevel.includes('68 dBA @ 7 meters with Acoustic Enclosure')) ? p.soundLevel : '65 – 70 dBA @ 7 meters (Weatherproof Soundproof Canopy)';
-          return { ...p, specTableRows: rows, engineMakes: engine, soundLevel: acoustic };
-        }
-        if (p.id === 'mobile-lighting' || p.name?.toLowerCase().includes('mobile') || p.name?.toLowerCase().includes('doosan') || p.name?.toLowerCase().includes('lighting') || p.capacityRange?.includes('4x1000W') || p.description?.toLowerCase().includes('road-towable')) {
-          const rows = (p.specTableRows && p.specTableRows.length >= 5 && p.specTableRows.some((r: any) => r.model?.toLowerCase().includes('doosan') || r.engineModel?.toLowerCase().includes('db58t')))
-            ? p.specTableRows
-            : DOOSAN_SPEC_ROWS;
-          const priceRows = (p.priceTableRows && p.priceTableRows.length >= 10)
-            ? p.priceTableRows
-            : DOOSAN_PRICE_GUIDE_ROWS;
-          return {
-            ...p,
-            name: 'Doosan generator',
-            category: 'diesel',
-            categoryLabel: 'Doosan Series',
-            capacityRange: '60 kVA – 1000 kVA (৬০ kVA – ১০০০ kVA)',
-            engineMakes: 'Genuine Doosan Infracore Diesel Engine (South Korea)',
-            soundLevel: '68 – 72 dBA @ 7 meters (Heavy-Duty Acoustic Canopy)',
-            fuelType: 'Diesel',
-            description: 'Doosan Heavy-Duty Industrial Diesel Generator systems (60 kVA – 1000 kVA / ৬০ kVA – ১০০০ kVA) powered by genuine Korean Doosan engines (DB58, D1146, DP086, P126, DP158, DP180, DP222), designed for continuous prime and standby operations in industrial factories, healthcare, and infrastructure projects.',
-            imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-            openGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-            canopyGenImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-            catalogImageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa6u9PsT9SdUDp5IyQViYT5o4KJqelVOIzV1K_59k5CsbyL7cTjGYtg2s&s=10',
-            catalogSheetTitle: 'DOOSAN GENERATOR — TECHNICAL SPECIFICATIONS & PRICE GUIDE',
-            catalogSubtitle: 'মডেল / টাইপ • প্রাইম ও স্ট্যান্ডবাই পাওয়ার • Doosan ইঞ্জিন মডেল • আনুমানিক মূল্য তালিকা (টাকায়)',
-            catalogPageNumber: 'Page-3',
-            specTableRows: rows,
-            priceTableRows: priceRows,
-            imageBadge: '60 kVA – 1000 kVA • Doosan Korea'
-          };
-        }
-        return p;
-      });
-      setProducts(sanitized);
+      setProducts(sanitizeProductList(d.products));
     }
     if (Array.isArray(d.services) && d.services.length > 0) setServices(d.services);
     if (Array.isArray(d.projects) && d.projects.length > 0) setProjects(d.projects);
@@ -481,21 +487,42 @@ export const App: React.FC = () => {
 
   // Worldwide persistent database save handler
   const handleSaveToDatabase = async (overrideData?: any): Promise<boolean> => {
-    handleSaveToLocalStorage(overrideData);
     let isSuccess = false;
+
+    const mergedPagesContent = overrideData?.pagesContent ? {
+      ...pagesContent,
+      ...overrideData.pagesContent,
+      home: { ...pagesContent.home, ...(overrideData.pagesContent.home || {}) },
+      about: { ...pagesContent.about, ...(overrideData.pagesContent.about || {}) },
+      mdMessage: { ...pagesContent.mdMessage, ...(overrideData.pagesContent.mdMessage || {}) },
+      ceoMessage: { ...pagesContent.ceoMessage, ...(overrideData.pagesContent.ceoMessage || {}) },
+      contact: { ...pagesContent.contact, ...(overrideData.pagesContent.contact || {}) },
+      products: { ...pagesContent.products, ...(overrideData.pagesContent.products || {}) },
+      services: { ...pagesContent.services, ...(overrideData.pagesContent.services || {}) },
+      projects: { ...pagesContent.projects, ...(overrideData.pagesContent.projects || {}) },
+      clients: { ...pagesContent.clients, ...(overrideData.pagesContent.clients || {}) },
+    } : pagesContent;
+
     const payload = {
       customizer: overrideData?.customizer ? { ...customizer, ...overrideData.customizer } : customizer,
-      products: overrideData?.products ?? products,
+      products: overrideData?.products ? sanitizeProductList(overrideData.products) : products,
       services: overrideData?.services ?? services,
       projects: overrideData?.projects ?? projects,
       clients: overrideData?.clients ?? clients,
       quotes: overrideData?.quotes ?? quotes,
-      pagesContent: overrideData?.pagesContent ? {
-        ...pagesContent,
-        ...overrideData.pagesContent,
-        home: { ...pagesContent.home, ...(overrideData.pagesContent.home || {}) }
-      } : pagesContent,
+      pagesContent: mergedPagesContent,
     };
+
+    // Immediately update local React state so any view switch in this session shows changes instantly
+    if (payload.customizer) setCustomizer(payload.customizer);
+    if (payload.products) setProducts(payload.products);
+    if (payload.services) setServices(payload.services);
+    if (payload.projects) setProjects(payload.projects);
+    if (payload.clients) setClients(payload.clients);
+    if (payload.quotes) setQuotes(payload.quotes);
+    if (payload.pagesContent) setPagesContent(payload.pagesContent);
+
+    handleSaveToLocalStorage(payload);
 
     // 1. Save directly to Firebase Firestore (Real Google Cloud Database)
     try {
